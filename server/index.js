@@ -10,6 +10,7 @@ if (app.get('env') === 'development'){
 app.set('views',path.join(__dirname,'./views'));
 
 app.use('/',routes());
+app.use(express.static('public'));
 
 app.listen(2295);
 
