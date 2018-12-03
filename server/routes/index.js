@@ -6,5 +6,9 @@ module.exports = () => {
         return res.render('registration');
     });
 
+    router.post('/',(req,res,next) =>{
+        return res.send("Post Request Sent");
+    });
+
     return router;
 };
