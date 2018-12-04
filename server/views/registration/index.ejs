@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"/> 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab' rel='stylesheet' type='text/css'>
@@ -23,20 +23,26 @@
            <div id="right"><h1 class="s2class"><span>SIGN</span><span class="su">UP</span></h1></div>
         </div>
         <div class="c2">
-           <form class="signup" action="/" method="POST">
+           <form class="signup" action="/register" method="POST">
               <h1 class="signup1">SIGN UP</h1>
-              <br><br><br><br>
+              <br><br>
+               <% if (errorRegister) { %>
+                  <div class="alert alert-danger signupalert"><span>All fields are required</span></div>
+               <% } else if (successfulRegistration){ %>
+                  <div class="alert alert-success signupalert"><span>Registered Successfully</span></div>
+               <% } %>   
+              <br><br>
            
-           <input name="fullname" type="text" placeholder="Full Name*" class="username"/>   
-           <input name="username" type="text" placeholder="Username*" class="username"/>
+           <input name="fullname" type="text" placeholder="Full Name" class="username"/>   
+           <input name="username" type="text" placeholder="Username" class="username"/>
            
-           <input name="email" type="text" placeholder="Email*" class="username"/>
+           <input name="email" type="text" placeholder="Email" class="username"/>
            
-           <input name="password" type="password" placeholder="Password*" class="username"/>
+           <input name="password" type="password" placeholder="Password" class="username"/>
               
            <input type="submit" class="btn" value="Sign up">
            </form>
-           <form class="signin" action="/" method="POST">
+           <form class="signin" action="/login" method="POST">
               
               <h1 class="signup1">SIGN IN</h1>
               <br><br><br><br>
