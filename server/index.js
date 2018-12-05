@@ -1,17 +1,41 @@
 const express = require('express');
 const path = require('path');
-
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const app = express();
-
 const routes = require('./routes');
+
+
 app.set('view engine','ejs');
 if (app.get('env') === 'development'){
     app.locals.pretty = true;
 }
 app.set('views',path.join(__dirname,'./views'));
+const options = {
+    host: "localhost",
+    user : "root",
+    password: "Coldplay1",
+    database: "oingo",
+    port: 8889,
+
+};
+
+var connection = mysql.createConnection(options);
+// Setting Mysql Session
+const sessionStore = new MySQLStore({},connection);
+
+app.use(session({
+    key:'oingo_cookie',
+    secret:'Dogs are Love',
+    store:sessionStore,
+    resave: false,
+    saveUninitialized:false,
+}));
 app.use(bodyParser.urlencoded({extended:true}));
-app.use('/',routes());
+
+app.use('/',routes());  
 
 app.use(express.static('public'));
 
