@@ -26,11 +26,15 @@
            <form class="signup" action="/register" method="POST">
               <h1 class="signup1">SIGN UP</h1>
               <br><br>
-               <% if (errorRegister) { %>
-                  <div class="alert alert-danger signupalert"><span>All fields are required</span></div>
-               <% } else if (successfulRegistration){ %>
-                  <div class="alert alert-success signupalert"><span>Registered Successfully</span></div>
-               <% } %>   
+                  <% if (flag == 1) { %>
+                     <div class="alert alert-danger" ><p>You need to fill all the details!!</p></div>   
+                  <% }else if (flag == 2){ %>
+                     <div class="alert alert-danger" ><p>Username or email already exists!!</p></div>   
+                  <% }else if(flag == 3){ %>
+                     <div class="alert alert-success" ><p>Successfully Registered. Please login to continue</p></div>   
+                  <% }else if (flag == 4){ %>
+                     <div class="alert alert-danger" ><p>Authentication error!! Please check your username and password again</p></div>  
+                  <% } %>          
               <br><br>
            
            <input name="fullname" type="text" placeholder="Full Name" class="username"/>   

@@ -1,15 +1,47 @@
 const express = require('express');
-const router = express.Router();
 const db = require('../config/database_conn');
 
+
+
+const router = express.Router();
+var sess;
+var USER_ID,USER_NAME;
 module.exports = () => {
     router.get('/',(req,res,next)=>{
-        return res.render('registration',{
-            page:'Registration',
-            errorRegister:false,
-            errorLogin:false,
-            successfulRegistration: false
-        });
+        sess = req.session;
+        if (!sess.sessId){
+            return res.render('registration',{
+                page:'Registration',
+                flag:0
+            });
+        
+        
+        }else{
+            var userId = sess.sessId;
+            //console.log(userId);
+            var userFullName = "";
+            var sql = "SELECT fullname from user where uid='"+userId+"'";
+            db.query(sql,(err,result)=>{
+                if (result.length > 0){
+                    userFullName = result[0].fullname;
+                    USER_ID = userId;
+                    USER_NAME = userFullName;
+                   // console.log(userFullName);
+
+                    // return res.render('home',{
+                    //     page:'Home Page',
+                    //     success:true,
+                    //     id:userId,
+                    //     name:userFullName
+                        
+                    // });
+                    res.redirect('/home');
+                }
+            });
+            
+        }
+
+       
     });
 
     router.post('/register',(req,res,next) =>{
@@ -24,7 +56,7 @@ module.exports = () => {
         if (!fullName || !username || !email || !password){
             return res.render('registration',{
                 page: 'Registration',
-                errorRegister: true
+                flag:1
             });
         }
 
@@ -32,25 +64,84 @@ module.exports = () => {
         db.query(sql,(err,result)=>{
             if (err){
                 successfulRegistration = false;
-                throw err;
-            } 
-            console.log("1 Record Inserted");
-            successfulRegistration = true;
+                return res.render('registration',{
+                    page: 'Registration',
+                    flag:2
+                });
+                
+            }else{
+                return res.render('registration',{
+                    page: 'Registration',
+                    flag:3
+                });
+            }
+           
+
         });
 
        
 
-        return res.render('registration',{
-            page: 'Registration',
-            errorRegister: false,
-            successfulRegistration
-        });
+        
     });
 
     router.post('/login',(req,res,next)=>{
         console.log(req.body);
-        return res.render('registration');
+        const userName = req.body.username.trim();
+        const password = req.body.password.trim();
+    
+
+        db.query("SELECT * FROM user where uname='"+userName+"' and password='"+password+"'",
+            (err,result)=>{
+                if (result.length == 0){
+                    res.render('registration',{
+                        page:'Registration',
+                        flag:4
+                    })
+                }else{
+
+                    
+                    sess = req.session;
+                    sess.sessId = result[0].uid;
+                    USER_ID = result[0].uid;
+                    USER_NAME = result[0].fullname;
+                    res.redirect('/home');
+                }
+               
+                
+                
+            });
+
+        //return res.render('registration');
+       
+       
     });
 
+    router.post('/logout',(req,res,next)=>{
+        req.session.destroy((err)=>{
+            if (err){
+                console.log("Error");
+            }else{
+                // return res.render('registration',{
+                //     page:'Registration',
+                //     flag:0
+                // });
+                res.redirect('/');
+            }
+        });
+    });
+
+
+    
+    router.get('/home',(req,res,next)=>{
+        return res.render('home',{
+            page:'Home Page',
+            success:true,
+            id:USER_ID,
+            name:USER_NAME
+           });
+    });
+
+
+    
     return router;
 };
