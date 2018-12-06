@@ -2,8 +2,10 @@ const express = require('express');
 const db = require('../config/database_conn');
 
 
+
 const router = express.Router();
 var sess;
+var USER_ID,USER_NAME;
 module.exports = () => {
     router.get('/',(req,res,next)=>{
         sess = req.session;
@@ -22,15 +24,18 @@ module.exports = () => {
             db.query(sql,(err,result)=>{
                 if (result.length > 0){
                     userFullName = result[0].fullname;
+                    USER_ID = userId;
+                    USER_NAME = userFullName;
                    // console.log(userFullName);
 
-                    return res.render('home',{
-                        page:'Home Page',
-                        success:true,
-                        id:userId,
-                        name:userFullName
+                    // return res.render('home',{
+                    //     page:'Home Page',
+                    //     success:true,
+                    //     id:userId,
+                    //     name:userFullName
                         
-                    });
+                    // });
+                    res.redirect('/home');
                 }
             });
             
@@ -97,12 +102,9 @@ module.exports = () => {
                     
                     sess = req.session;
                     sess.sessId = result[0].uid;
-                    return res.render('home',{
-                        page:'Home Page',
-                        success:true,
-                        id:result[0].uid,
-                        name:result[0].fullname
-                       });
+                    USER_ID = result[0].uid;
+                    USER_NAME = result[0].fullname;
+                    res.redirect('/home');
                 }
                
                 
@@ -114,5 +116,32 @@ module.exports = () => {
        
     });
 
+    router.post('/logout',(req,res,next)=>{
+        req.session.destroy((err)=>{
+            if (err){
+                console.log("Error");
+            }else{
+                // return res.render('registration',{
+                //     page:'Registration',
+                //     flag:0
+                // });
+                res.redirect('/');
+            }
+        });
+    });
+
+
+    
+    router.get('/home',(req,res,next)=>{
+        return res.render('home',{
+            page:'Home Page',
+            success:true,
+            id:USER_ID,
+            name:USER_NAME
+           });
+    });
+
+
+    
     return router;
 };
