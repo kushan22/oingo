@@ -130,8 +130,12 @@ module.exports = () => {
         });
     });
 
+    router.post('home/createPost',(req,res,next) => {
+        return res.send("Redirect to Create Post Page");
+    });
 
-    
+
+    // Home Router
     router.get('/home',(req,res,next)=>{
         return res.render('home',{
             page:'Home Page',
@@ -139,6 +143,11 @@ module.exports = () => {
             id:USER_ID,
             name:USER_NAME
            });
+
+    
+
+
+         
     });
 
 
