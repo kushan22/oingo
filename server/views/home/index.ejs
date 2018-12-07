@@ -11,26 +11,29 @@
         <% if (success){ %>
         <div class="navbar navbar-default navbar-static-top">
                 <div class="container">
-                    <div class="navbar-collapse navbar-collapse-1 collapse" aria-expanded="true">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapsed" data-target="#oingolinks" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="#" class="navbar-brand">Oingo</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oingolinks">
                         <ul class="nav navbar-nav">
                             <li class="active">
-                                <a href="#fake"><span class="glyphicon glyphicon-home"></span> Home</a>
+                                <a href="#"><span class="glyphicon glyphicon-home"></span> Home</a>
                             </li>
                             <li>
-                                <a href="#fake"><span class="glyphicon glyphicon-bell"></span> Notifications</a>
+                                <a href="#"><span class="glyphicon glyphicon-bell"></span> Profile</a>
                             </li>
-                            <li>
-                                <a href="#fake"><span class="glyphicon glyphicon-envelope"></span> Messages</a>
-                            </li>
+                            
                         </ul>
                         <div class="navbar-form navbar-right">
-                            <div class="form-group has-feedback">
-                                <input type="text" class="form-control-nav" id="search" aria-describedby="search1">
-                                <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
-                            </div>
             
                             <button class="btn btn-primary" type="submit" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span> Tweet
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span> Create Note
                             </button>
                         </div>
                     </div>
@@ -111,7 +114,7 @@
                                     </a>
                                     <div class="media-body">
                                         <h4 class="media-heading">Media heading</h4>
-                                        <p>Dolorem aspernatur rerum, iure? Culpa iste aperiam sequi, fuga, quasi rerum, eum, quo natus tenetur officia placeat.</p>
+                                            <p>Dolorem aspernatur rerum, iure? Culpa iste aperiam sequi, fuga, quasi rerum, eum, quo natus tenetur officia placeat.</p>
                                         <ul class="nav nav-pills nav-pills-custom">
                                             <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
                                             <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
@@ -261,37 +264,23 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="well well-sm">
-                            <ul class="list-inline">
-                                <li>� 2015 Twitter</li>
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Help</a></li>
-                                <li><a href="#">Terms</a></li>
-                                <li><a href="#">Privacy</a></li>
-                                <li><a href="#">Cookies</a></li>
-                                <li><a href="#">Ads info</a></li>
-                                <li><a href="#">Brand</a></li>
-                                <li><a href="#">Blog</a></li>
-                                <li><a href="#">Status</a></li>
-                                <li><a href="#">Apps</a></li>
-                                <li><a href="#">Jobs</a></li>
-                                <li><a href="#">Advertise</a></li>
-                                <li><a href="#">Businesses</a></li>
-                                <li><a href="#">Media</a></li>
-                                <li><a href="#">Developers</a></li>
-                            </ul>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
-            </body>
-            </html>
+
+
+            <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+            
+        
+        </body>
+           
 
             <% } %>
         
         
+            
 
-
-
-    </body>
+   
 </html>
