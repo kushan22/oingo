@@ -36,8 +36,8 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.use('/',routes());  
-
 app.use(express.static('public'));
+
 
 
 app.listen(2295);

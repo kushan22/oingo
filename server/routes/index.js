@@ -26,15 +26,7 @@ module.exports = () => {
                     userFullName = result[0].fullname;
                     USER_ID = userId;
                     USER_NAME = userFullName;
-                   // console.log(userFullName);
-
-                    // return res.render('home',{
-                    //     page:'Home Page',
-                    //     success:true,
-                    //     id:userId,
-                    //     name:userFullName
-                        
-                    // });
+                   
                     res.redirect('/home');
                 }
             });
@@ -130,8 +122,10 @@ module.exports = () => {
         });
     });
 
-    router.post('home/createPost',(req,res,next) => {
-        return res.send("Redirect to Create Post Page");
+    router.get('/home/createPost',(req,res,next) => {
+        sess = req.session;
+        var userid = sess.sessId;
+        return res.send("Redirect to Create Post Page " + userid);
     });
 
 
@@ -148,6 +142,10 @@ module.exports = () => {
 
 
          
+    });
+
+    router.post('/home/createPost',(req,res,next) => {
+        return res.send('Awesome');
     });
 
 
