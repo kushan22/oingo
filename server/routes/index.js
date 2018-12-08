@@ -125,7 +125,7 @@ module.exports = () => {
     router.get('/home/createPost',(req,res,next) => {
         sess = req.session;
         var userid = sess.sessId;
-        return res.send("Redirect to Create Post Page " + userid);
+        return res.render('createPost');
     });
 
 
