@@ -37,7 +37,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use('/',routes());  
 app.use(express.static('public'));
-
+app.get('/favicon.ico',(req,res,next) => {
+    return res.sendStatus(204);
+});
 
 
 app.listen(2295);

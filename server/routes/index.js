@@ -18,7 +18,7 @@ module.exports = () => {
         
         }else{
             var userId = sess.sessId;
-            //console.log(userId);
+            console.log("Inside Route 1");
             var userFullName = "";
             var sql = "SELECT fullname from user where uid='"+userId+"'";
             db.query(sql,(err,result)=>{
@@ -28,6 +28,8 @@ module.exports = () => {
                     USER_NAME = userFullName;
                    
                     res.redirect('/home');
+                }else{
+                    return next();
                 }
             });
             
@@ -117,12 +119,14 @@ module.exports = () => {
                 //     page:'Registration',
                 //     flag:0
                 // });
+                console.log("Inside Logout");
                 res.redirect('/');
             }
         });
     });
 
     router.get('/home/createPost',(req,res,next) => {
+        console.log("Called Create Post");
         sess = req.session;
         var userid = sess.sessId;
         return res.render('createPost');
@@ -131,12 +135,28 @@ module.exports = () => {
 
     // Home Router
     router.get('/home',(req,res,next)=>{
-        return res.render('home',{
-            page:'Home Page',
-            success:true,
-            id:USER_ID,
-            name:USER_NAME
-           });
+            //req.connection.setTimeout(0);
+            // var num_of_posts;
+            console.log("Called")
+            var sql = "SELECT Count(*) as postCount FROM posts where uid = '"+USER_ID+"'";
+            db.query(sql,(err,result) => {
+                if (result.length == 0){
+                    console.log("Zero Results");
+                }else{
+                    console.log(result);
+                    return res.render('home',{
+                        page:'Home Page',
+                        success:true,
+                        id:USER_ID,
+                        name:USER_NAME
+                        
+                       });
+                }
+            });
+       
+
+
+      
 
     
 
