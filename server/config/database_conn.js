@@ -1,17 +1,17 @@
 const mysql = require('mysql');
 
     const con = mysql.createConnection({
-        host: "localhost",
-        user : "root",
-        password: "Coldplay1",
-        database: "oingo",
-        port: 8889,
-
+        host: "MSI",
+        user : "master",
+        password:"master",
+        database: "sys",
+        port: 3306,
+        //insecureAuth: false
     });
 
 con.connect((err)=>{
     if(err) console.log(err);
-    console.log("Connected");
+    else console.log("Connected");
     
 });
 

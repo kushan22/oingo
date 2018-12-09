@@ -26,7 +26,8 @@ module.exports = () => {
                     userFullName = result[0].fullname;
                     USER_ID = userId;
                     USER_NAME = userFullName;
-                   // console.log(userFullName);
+                    console.log(userFullName);
+                    //console.log(email);
 
                     // return res.render('home',{
                     //     page:'Home Page',
@@ -64,12 +65,14 @@ module.exports = () => {
         db.query(sql,(err,result)=>{
             if (err){
                 successfulRegistration = false;
+                console.log(err);
                 return res.render('registration',{
                     page: 'Registration',
                     flag:2
                 });
                 
             }else{
+                
                 return res.render('registration',{
                     page: 'Registration',
                     flag:3
@@ -130,7 +133,11 @@ module.exports = () => {
         });
     });
 
-
+    router.get('/home/createPost',(req,res,next) => {
+        sess = req.session;
+        var userid = sess.sessId;
+        return res.render('createPost');
+    });
     
     router.get('/home',(req,res,next)=>{
         return res.render('home',{

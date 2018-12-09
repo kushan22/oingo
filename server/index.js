@@ -14,15 +14,19 @@ if (app.get('env') === 'development'){
 }
 app.set('views',path.join(__dirname,'./views'));
 const options = {
-    host: "localhost",
-    user : "root",
-    password: "Coldplay1",
-    database: "oingo",
-    port: 8889,
+    host: "MSI",
+    user : "master",
+    password:"master",
+    database: "sys",
+    port: 3306,
 
 };
 
 var connection = mysql.createConnection(options);
+
+if(!connection){
+    console.log("ERROR");
+}
 // Setting Mysql Session
 const sessionStore = new MySQLStore({},connection);
 
