@@ -133,12 +133,21 @@ module.exports = () => {
         });
     });
 
+<<<<<<< HEAD
     router.get('/home/createPost',(req,res,next) => {
         sess = req.session;
         var userid = sess.sessId;
         return res.render('createPost');
     });
     
+=======
+    router.post('home/createPost',(req,res,next) => {
+        return res.send("Redirect to Create Post Page");
+    });
+
+
+    // Home Router
+>>>>>>> dd4725c0c4de81b32a26fa97b21339a580c04d7a
     router.get('/home',(req,res,next)=>{
         return res.render('home',{
             page:'Home Page',
@@ -146,6 +155,11 @@ module.exports = () => {
             id:USER_ID,
             name:USER_NAME
            });
+
+    
+
+
+         
     });
 
 
