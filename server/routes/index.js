@@ -1,6 +1,5 @@
 const express = require('express');
 const db = require('../config/database_conn');
-const promiseDb = require('../config/promisedatabaseconn');
 
 
 const router = express.Router();
