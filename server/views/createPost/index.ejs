@@ -11,97 +11,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
-
-
-    <!--  <script>
-        $(function () {
-            $("#datepicker").datepicker();
-        });
-        $(function () {
-            $("#datepicker2").datepicker();
-        });
-    </script> -->
-    <script>
-        $(function () {
-            console.log("Ready");
-            $("#Schedule1").on('change', function () {
-                if ($(this).val() === "3") {
-                    console.log("Inside if");
-                    $("#Sch2").css("visibility", "visible");
-                } else {
-                    $("#Sch2").css("visibility", "hidden");
-                    $("#Week").css("visibility", "hidden");
-                    $("#dp1").css("visibility", "hidden");
-                    console.log("Inside else");
-                }
-            });
-            $("#Schedule2").on('change', function () {
-                if ($(this).val() === "1" || $(this).val() === "2") {
-                    console.log("Inside if sch2");
-                    $("#Week").css("visibility", "visible");
-                } else {
-                    $("#Week").css("visibility", "hidden");
-                    console.log("Inside else sch2");
-                }
-                if ($(this).val() === "3" || $(this).val() === "4") {
-                    $("#dp1").css("visibility", "visible");
-                    $("#datepicker").datepicker({
-                        dateFormat: 'dd-mm-yy'
-                    });
-                    $("#datepicker2").datepicker({
-                        dateFormat: 'dd-mm-yy'
-                    });
-                    $('#timepicker5').timepicker({
-                        template: false,
-                        showInputs: false,
-                        minuteStep: 5
-                    });
-                    $('#timepicker6').timepicker({
-                        template: false,
-                        showInputs: false,
-                        minuteStep: 5
-                    });
-                }
-            });
-
-        });
-
-
-    </script>
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
 </head>
 
 <body>
 
     <div class="container">
         <h1> New Post</h1>
-        <div class="jumbotron">
+        <div class="jumbotron" style="width:100%;height:100%; min-height: 300px;">
 
-        <div class="container">
+            <form class="form-group" action="/home" method="POST">
+        
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea class="form-control rounded-0" id="description" rows="3"></textarea>
+                <textarea name = "postDescription" class="form-control rounded-0" id="description" rows="3"></textarea>
                 <label for="tag">Tag</label>
-                <textarea class="form-control rounded-0" id="tag" rows="1"></textarea>
+                <textarea name = "postTags" class="form-control rounded-0" id="tag" rows="1"></textarea>
+                <label for="tag">State</label>
+                <select id="state" name="state">
+                    <option value="1">State1</option>
+                    <option value="2">State2</option>
+                    <option value="3">State3</option>
+                </select>
             </div>
 
             <div>
                 <div class="d-inline">
                     <label for="location">Location</label>
-                    <input type="text" id="location" rows="1">
+                    <input name = "postLocation" id="autocomplete" placeholder="Enter your address" type="text"></input>
+                    Or
+                    <input  id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
                 </div>
                 <div class="d-inline">
                     <label for="radius">Radius</label>
-                    <input type="text" id="radius" rows="1">
+                    <input name="postRadius" type="text" id="radius" rows="1">
                 </div>
             </div>
             <!-- <div style="float:left">
@@ -118,6 +61,7 @@
                 Schedule
                 <div class="d-inline">
                     <select name="Schedule1" id="Schedule1">
+                        <option value="0">Select One</option>
                         <option value="1">For 24 Hours</option>
                         <option value="2">Specific Date</option>
                         <option value="3">Recurring</option>
@@ -125,6 +69,7 @@
                 </div>
                 <div class="d-inline " id="Sch2" style="visibility:hidden;">
                     <select id="Schedule2" name="Schedule2">
+                        <option value="0">Select One</option>
                         <option value="1">Weekly</option>
                         <option value="2">Biweekly</option>
                         <option value="3">Monthly</option>
@@ -134,6 +79,7 @@
                 </div>
                 <div class="d-inline">
                     <select name="Week" id="Week" style="visibility:hidden">
+                        <option value="0">Select One</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
                         <option value="3">Wednesday</option>
@@ -147,20 +93,208 @@
 
 
             </div>
-            <div class="d-inline" style="float:left;visibility:hidden" id="dp1">
-                <p>Date From: <input type="text" id="datepicker"></p>
-                <p>Date To: <input type="text" id="datepicker2"></p>
-                <p>Time From:<input id="timepicker5" type="text" class="input-small">
-                <p>Time To:<input id="timepicker6" type="text" class="input-small">
+            <div class="d-inline" style="float:left;" id="dp1">
+                <div id="DateFromdiv" style="visibility:hidden">
+                    <p>Date From:<input name="postFromDate" id="DateFrom" type="date"></p>
+                </div>
+                <div id="DateTodiv" style="visibility:hidden">
+                    <p>Date To:<input name="postToDate" id="DateTo" type="date"></p>
+                </div>
+                <div id="TimeFromDiv" style="visibility:hidden">
+                    <p>Time From:<input name="postFromTime" id="timepicker5" type="text" class="input-small"></p>
+                </div>
+                <div id="TimeToDiv" style="visibility:hidden">
+                    <p>Time To:<input name="postToTime" id="timepicker6" type="text" class="input-small"></p>
+                </div>
             </div>
+           
+
+              <input type="submit" value="Post">
+
+            </form>
+
         </div>
     </div>
-    </div>
 
 
 
 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
 
+    <script>
+        // This example displays an address form, using the autocomplete feature
+        // of the Google Places API to help users fill in the information.
+
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+        var currentLocation, autocomplete;
+
+
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                  /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')));
+
+            autocomplete.setFields(
+                ['address_components', 'geometry', 'icon', 'name']);
+
+            autocomplete.addListener('place_changed', codeAddress);
+        }
+
+        function currLoc() {
+            function success(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+                alert(latitude + " " + longitude);
+                document.getElementById('autocomplete').value = latitude + "_" + longitude;
+            }
+            function error() {
+                alert("Unable to retrieve your location");
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error);
+        }
+        function codeAddress() {
+            geocoder = new google.maps.Geocoder();
+            var address = document.getElementById("autocomplete").value;
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                    Latitude = results[0].geometry.location.lat();
+                    Longitude = results[0].geometry.location.lng();
+
+                    console.log(Latitude);
+                    console.log(Longitude);
+                    document.getElementById('autocomplete').value = Latitude + "_" + Longitude;
+                }
+
+                else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        }
+
+        function codeLatLong(Error) {
+            if (!Error) {
+                console.log("found");
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeYLbu7kilhYeIsgwY8u_QB0RuETgJcHo&libraries=places&callback=initAutocomplete" async defer></script>
+    <!--  <script>
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+    $(function () {
+        $("#datepicker2").datepicker();
+    });
+</script> -->
+    <script>
+        $(function () {
+            console.log("Ready");
+            $("#Schedule1").on('change', function () {
+                if ($(this).val() === "3") {
+                    console.log("Inside if");
+                    $("#Sch2").css("visibility", "visible");
+                    $("#DateFromdiv").css("visibility", "hidden");
+                    $("#DateTodiv").css("visibility", "hidden");
+                    $("#TimeFromDiv").css("visibility", "hidden");
+                    $("#TimeToDiv").css("visibility", "hidden");
+                } else {
+                    if ($(this).val() === "2") {
+                        $("#DateFromdiv").css("visibility", "visible");
+                        $("#TimeFromDiv").css("visibility", "visible");
+                        $("#TimeToDiv").css("visibility", "visible");
+                        $("#DateTodiv").css("visibility", "hidden");
+                        $("#Sch2").css("visibility", "hidden");
+                        $("#Week").css("visibility", "hidden");
+                    }
+                    else {
+                        $("#DateFromdiv").css("visibility", "hidden");
+                        $("#TimeFromDiv").css("visibility", "hidden");
+                        $("#TimeToDiv").css("visibility", "hidden");
+                        console.log("Inside else");
+                    }
+
+                }
+            });
+            $("#Schedule2").on('change', function () {
+                if ($(this).val() === "1" || $(this).val() === "2") {
+                    console.log("Inside if sch2");
+                    if ($("#Week").val() <= 0) {
+                        $("#Week").css("visibility", "visible");
+                    } else {
+                        $("#Week").css("visibility", "visible");
+                        $("#DateFromdiv").css("visibility", "hidden");
+                        $("#DateTodiv").css("visibility", "hidden");
+                        $("#TimeFromDiv").css("visibility", "hidden");
+                        $("#TimeToDiv").css("visibility", "hidden");
+                    }
+
+                } else {
+                    $("#Week").css("visibility", "hidden");
+                    console.log("Inside else sch2");
+                    $("#DateFromdiv").css("visibility", "hidden");
+                    $("#DateTodiv").css("visibility", "hidden");
+                    $("#TimeFromDiv").css("visibility", "hidden");
+                    $("#TimeToDiv").css("visibility", "hidden");
+
+                    if ($(this).val() === "3" || $(this).val() === "4") {
+                        $("#DateFromdiv").css("visibility", "visible");
+                        $("#DateTodiv").css("visibility", "visible");
+                        $("#TimeFromDiv").css("visibility", "visible");
+                        $("#TimeToDiv").css("visibility", "visible");
+                        $('#timepicker5').timepicker({
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
+                        $('#timepicker6').timepicker({
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
+                    } else {
+                        $("#dp1").css("visibility", "hidden");
+                    }
+                }
+            });
+            $("#Week").on('change', function () {
+                if ($(this).val() > 0) {
+                    console.log("hello");
+                    $("#DateFromdiv").css("visibility", "visible");
+                    $("#DateTodiv").css("visibility", "visible");
+                    $("#TimeFromDiv").css("visibility", "visible");
+                    $("#TimeToDiv").css("visibility", "visible");
+                } else {
+                    console.log("nooooo");
+                    $("#DateFromdiv").css("visibility", "hidden");
+                    $("#DateTodiv").css("visibility", "hidden");
+                    $("#TimeFromDiv").css("visibility", "hidden");
+                    $("#TimeToDiv").css("visibility", "hidden");
+                }
+            });
+
+            
+
+        });
+
+     
+        
+
+    </script>
 
 </body>
 
