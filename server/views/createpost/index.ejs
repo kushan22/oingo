@@ -20,12 +20,13 @@
         <h1> New Post</h1>
         <div class="jumbotron" style="width:100%;height:100%; min-height: 300px;">
 
-
+            <form class="form-group" action="/home" method="POST">
+        
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea class="form-control rounded-0" id="description" rows="3"></textarea>
+                <textarea name = "postDescription" class="form-control rounded-0" id="description" rows="3"></textarea>
                 <label for="tag">Tag</label>
-                <textarea class="form-control rounded-0" id="tag" rows="1"></textarea>
+                <textarea name = "postTags" class="form-control rounded-0" id="tag" rows="1"></textarea>
                 <label for="tag">State</label>
                 <select id="state" name="state">
                     <option value="1">State1</option>
@@ -37,13 +38,13 @@
             <div>
                 <div class="d-inline">
                     <label for="location">Location</label>
-                    <input id="autocomplete" placeholder="Enter your address" type="text"></input>
+                    <input name = "postLocation" id="autocomplete" placeholder="Enter your address" type="text"></input>
                     Or
-                    <input id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
+                    <input  id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
                 </div>
                 <div class="d-inline">
                     <label for="radius">Radius</label>
-                    <input type="text" id="radius" rows="1">
+                    <input name="postRadius" type="text" id="radius" rows="1">
                 </div>
             </div>
             <!-- <div style="float:left">
@@ -94,18 +95,24 @@
             </div>
             <div class="d-inline" style="float:left;" id="dp1">
                 <div id="DateFromdiv" style="visibility:hidden">
-                    <p>Date From:<input id="DateFrom" type="date"></p>
+                    <p>Date From:<input name="postFromDate" id="DateFrom" type="date"></p>
                 </div>
                 <div id="DateTodiv" style="visibility:hidden">
-                    <p>Date To:<input id="DateTo" type="date"></p>
+                    <p>Date To:<input name="postToDate" id="DateTo" type="date"></p>
                 </div>
                 <div id="TimeFromDiv" style="visibility:hidden">
-                    <p>Time From:<input id="timepicker5" type="text" class="input-small"></p>
+                    <p>Time From:<input name="postFromTime" id="timepicker5" type="text" class="input-small"></p>
                 </div>
                 <div id="TimeToDiv" style="visibility:hidden">
-                    <p>Time To:<input id="timepicker6" type="text" class="input-small"></p>
+                    <p>Time To:<input name="postToTime" id="timepicker6" type="text" class="input-small"></p>
                 </div>
             </div>
+           
+
+              <input type="submit" value="Post">
+
+            </form>
+
         </div>
     </div>
 
@@ -151,6 +158,7 @@
                 var latitude = position.coords.latitude;
                 var longitude = position.coords.longitude;
                 alert(latitude + " " + longitude);
+                document.getElementById('autocomplete').value = latitude + "_" + longitude;
             }
             function error() {
                 alert("Unable to retrieve your location");
@@ -169,6 +177,7 @@
 
                     console.log(Latitude);
                     console.log(Longitude);
+                    document.getElementById('autocomplete').value = Latitude + "_" + Longitude;
                 }
 
                 else {
@@ -276,9 +285,14 @@
                     $("#TimeFromDiv").css("visibility", "hidden");
                     $("#TimeToDiv").css("visibility", "hidden");
                 }
-            })
+            });
+
+            
+
         });
 
+     
+        
 
     </script>
 
