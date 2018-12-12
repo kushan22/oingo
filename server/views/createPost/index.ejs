@@ -20,7 +20,7 @@
         <h1> New Post</h1>
         <div class="jumbotron" style="width:100%;height:100%; min-height: 300px;">
 
-            <form class="form-group" action="/home" method="POST">
+            <form class="form-group" action="/home/createPost" method="POST">
         
             <div class="form-group">
                 <label for="description">Description</label>
@@ -29,9 +29,9 @@
                 <textarea name = "postTags" class="form-control rounded-0" id="tag" rows="1"></textarea>
                 <label for="tag">State</label>
                 <select id="state" name="state">
-                    <option value="1">State1</option>
-                    <option value="2">State2</option>
-                    <option value="3">State3</option>
+                    <option value="Chilling">Chilling</option>
+                    <option value="At Lunch">At Lunch</option>
+                    <option value="Busy">Busy</option>
                 </select>
             </div>
 
@@ -79,14 +79,14 @@
                 </div>
                 <div class="d-inline">
                     <select name="Week" id="Week" style="visibility:hidden">
-                        <option value="0">Select One</option>
+                        <option value="100">Select One</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
                         <option value="3">Wednesday</option>
                         <option value="4">Thursday</option>
                         <option value="5">Friday</option>
                         <option value="6">Saturday</option>
-                        <option value="7">Sunday</option>
+                        <option value="0">Sunday</option>
                     </select>
 
                 </div>
@@ -203,6 +203,16 @@
 </script> -->
     <script>
         $(function () {
+            $('#timepicker5').timepicker({
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
+                        $('#timepicker6').timepicker({
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
             console.log("Ready");
             $("#Schedule1").on('change', function () {
                 if ($(this).val() === "3") {
@@ -256,16 +266,7 @@
                         $("#DateTodiv").css("visibility", "visible");
                         $("#TimeFromDiv").css("visibility", "visible");
                         $("#TimeToDiv").css("visibility", "visible");
-                        $('#timepicker5').timepicker({
-                            template: false,
-                            showInputs: false,
-                            minuteStep: 5
-                        });
-                        $('#timepicker6').timepicker({
-                            template: false,
-                            showInputs: false,
-                            minuteStep: 5
-                        });
+                        
                     } else {
                         $("#dp1").css("visibility", "hidden");
                     }
