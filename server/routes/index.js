@@ -5,43 +5,43 @@ const promiseDb = require('../config/promisedatabaseconn');
 
 const router = express.Router();
 var sess;
-var USER_ID,USER_NAME;
+var USER_ID, USER_NAME;
 module.exports = () => {
 
-   
 
-    router.get('/',(req,res,next)=>{
+
+    router.get('/', (req, res, next) => {
         sess = req.session;
-        if (!sess.sessId){
-            return res.render('registration',{
-                page:'Registration',
-                flag:0
+        if (!sess.sessId) {
+            return res.render('registration', {
+                page: 'Registration',
+                flag: 0
             });
-        
-        
-        }else{
+
+
+        } else {
             var userId = sess.sessId;
             console.log("Inside Route 1");
             var userFullName = "";
-            var sql = "SELECT fullname from user where uid='"+userId+"'";
-            db.query(sql,(err,result)=>{
-                if (result.length > 0){
+            var sql = "SELECT fullname from user where uid='" + userId + "'";
+            db.query(sql, (err, result) => {
+                if (result.length > 0) {
                     userFullName = result[0].fullname;
                     USER_ID = userId;
                     USER_NAME = userFullName;
-                   
+
                     res.redirect('/home');
-                }else{
+                } else {
                     return next();
                 }
             });
-            
+
         }
 
-       
+
     });
 
-    router.post('/register',(req,res,next) =>{
+    router.post('/register', (req, res, next) => {
         console.log(req.body);
         const fullName = req.body.fullname.trim();
         const username = req.body.username.trim();
@@ -50,76 +50,151 @@ module.exports = () => {
         const profilePic = "default";
         const state = "defaultState";
 
-        if (!fullName || !username || !email || !password){
-            return res.render('registration',{
+        if (!fullName || !username || !email || !password) {
+            return res.render('registration', {
                 page: 'Registration',
-                flag:1
+                flag: 1
             });
         }
 
-        const sql = "INSERT INTO user (uname,email,profilepic,password,fullname,state) VALUES('"+username+"','"+email+"','"+profilePic+"','"+password+"','"+fullName+"','"+state+"')";
-        db.query(sql,(err,result)=>{
-            if (err){
+        const sql = "INSERT INTO user (uname,email,profilepic,password,fullname,state) VALUES('" + username + "','" + email + "','" + profilePic + "','" + password + "','" + fullName + "','" + state + "')";
+        db.query(sql, (err, result) => {
+            if (err) {
                 successfulRegistration = false;
                 console.log(err);
-                return res.render('registration',{
+                return res.render('registration', {
                     page: 'Registration',
-                    flag:2
+                    flag: 2
                 });
-                
-            }else{
-                
-                return res.render('registration',{
+
+            } else {
+
+                return res.render('registration', {
                     page: 'Registration',
-                    flag:3
+                    flag: 3
                 });
             }
-           
+
 
         });
 
-       
 
-        
+
+
     });
 
-    router.post('/login',(req,res,next)=>{
+    router.post('/login', (req, res, next) => {
         console.log(req.body);
         const userName = req.body.username.trim();
         const password = req.body.password.trim();
-    
 
-        db.query("SELECT * FROM user where uname='"+userName+"' and password='"+password+"'",
-            (err,result)=>{
-                if (result.length == 0){
-                    res.render('registration',{
-                        page:'Registration',
-                        flag:4
+
+        db.query("SELECT * FROM user where uname='" + userName + "' and password='" + password + "'",
+            (err, result) => {
+                if (result.length == 0) {
+                    res.render('registration', {
+                        page: 'Registration',
+                        flag: 4
                     })
-                }else{
+                } else {
 
-                    
+
                     sess = req.session;
                     sess.sessId = result[0].uid;
                     USER_ID = result[0].uid;
                     USER_NAME = result[0].fullname;
                     res.redirect('/home');
                 }
-               
-                
-                
+
+
+
             });
 
         //return res.render('registration');
-       
-       
+
+
     });
 
-    router.post('/logout',(req,res,next)=>{
-        req.session.destroy((err)=>{
-            if (err){
+    router.get('/home/friend', async (req, res, next) => {
+        console.log("inside friend");
+        console.log(req.query);
+        var userid = req.query['uid'];
+        var sessionUser = USER_ID;
+        console.log(sessionUser);
+        friendreqStatus = 1;
+        try {
+            var friend_reqsql = "INSERT INTO friends(u1id,u2id,status) values('" + sessionUser + "','" + userid + "','" + friendreqStatus + "')";
+            var status = await promiseDb.query(friend_reqsql);
+        } catch (err) {
+            throw new Error(err);
+        }
+        res.redirect('/home');
+    });
+
+    router.post('/home/friendrequest', async (req, res, next) => {
+
+        var user = USER_ID;
+        acceptedreqid = req.body.friendId;
+        console.log(acceptedreqid||"eyyy");
+        console.log("in friend request");
+        console.log(req.body);
+        
+        if (acceptedreqid) {
+            friendstatus = 2;
+            try {
+                var updateQuery = "update friends set status='" + friendstatus + "' where u2id='" + USER_ID + "' and u1id='" + acceptedreqid + "'";
+                console.log(updateQuery);
+                var updateres = await promiseDb.query(updateQuery);
+
+            } catch (err) {
+                throw new Error(err);
+            }
+        }
+        res.redirect('/home/friendrequest');
+
+    });
+
+
+
+    router.get('/home/friendrequest', async (req, res, next) => {
+        var frflag
+
+        frflag = 1;
+        console.log("inside friend requests");
+        var sessionUser = USER_ID;
+        console.log(USER_ID);
+
+        try {
+            var friend_reqsql = "select uid,fullname from user where uid in (select u1id  from friends where status =1 and u2id='" + USER_ID + "')";
+            var friendreqres = await promiseDb.query(friend_reqsql);
+            var res_arr_friends = [];
+            var res_arr_frname = [];
+            for (var i = 0; i < friendreqres.length; i++) {
+                res_arr_friends[i] = friendreqres[i]['uid'];
+                res_arr_frname[i] = friendreqres[i]['fullname'];
+            }
+            console.log(res_arr_friends);
+        } catch (err) {
+            throw new Error(err);
+        }
+
+
+
+
+        return res.render('friendrequest', {
+            friendflag: frflag,
+            friends: res_arr_friends,
+            frname: res_arr_frname,
+        });
+
+    });
+
+
+    router.post('/logout', (req, res, next) => {
+        req.session.destroy((err) => {
+            if (err) {
                 console.log("Error");
-            }else{
+            } else {
                 // return res.render('registration',{
                 //     page:'Registration',
                 //     flag:0
@@ -130,74 +205,85 @@ module.exports = () => {
         });
     });
 
-    router.get('/home/createPost',(req,res,next) => {
+    router.get('/home/createPost', (req, res, next) => {
         console.log("Called Create Post");
         sess = req.session;
         var userid = sess.sessId;
         return res.render('createPost');
     });
 
-    router.get('/home/filter',(req,res,next) => {
+    router.get('/home/filter', (req, res, next) => {
         sess = req.session;
         var userid = sess.sessId;
         return res.render('filter');
     });
-    
-    router.post('home/filter',(req,res,next) => {
+
+    router.post('home/filter', (req, res, next) => {
         return res.send("Redirect to Create Post Page");
     });
 
 
     // Home Router
-    router.get('/home',async (req,res,next)=>{
-            //req.connection.setTimeout(0);
-            var num_of_posts=1,num_of_friends=1,num_of_filters=1;
-            console.log("Called");
+    router.get('/home', async (req, res, next) => {
+        //req.connection.setTimeout(0);
+        var num_of_posts = 1, num_of_friends = 1, num_of_filters = 1;
+        console.log("Called");
 
-            try{
-                var sql = "SELECT Count(*) as postCount FROM posts where uid = '"+USER_ID+"'";
-                var resultPost = await promiseDb.query(sql);
-                num_of_posts = resultPost[0]['postCount'];
+        try {
+            var sql = "SELECT Count(*) as postCount FROM posts where uid = '" + USER_ID + "'";
+            var resultPost = await promiseDb.query(sql);
+            num_of_posts = resultPost[0]['postCount'];
 
-                var sql1 = "SELECT Count(*) as friendCount FROM friends where u1id = '"+USER_ID+"' OR u2id = '"+USER_ID+"'";
-                var resultFriend = await promiseDb.query(sql1);
-                num_of_friends = resultFriend[0]['friendCount'];
+            var sql1 = "SELECT Count(*) as friendCount FROM friends where u1id = '" + USER_ID + "' OR u2id = '" + USER_ID + "'";
+            var resultFriend = await promiseDb.query(sql1);
+            num_of_friends = resultFriend[0]['friendCount'];
 
-                var sql2 = "SELECT Count(*) as filterCount FROM filter_save where uid = '"+USER_ID+"'";
-                var resultFilter = await promiseDb.query(sql2);
-                num_of_filters = resultFilter[0]['filterCount'];
-                
-
-                return res.render('home',{
-                    page:'Home Page',
-                    success:true,
-                    id:USER_ID,
-                    name:USER_NAME,
-                    posts:num_of_posts,
-                    friends:num_of_friends,
-                    filters:num_of_filters
-                    
-                   });
-            }catch(err){
-                throw new Error(Err);
+            var sql2 = "SELECT Count(*) as filterCount FROM filter_save where uid = '" + USER_ID + "'";
+            var resultFilter = await promiseDb.query(sql2);
+            num_of_filters = resultFilter[0]['filterCount'];
+            console.log(USER_ID);
+            var friendsql = "select uid,fullname from user where uid != '" + USER_ID + "' and uid  not in( select distinct u1id as friends from friends where u2id='" + USER_ID + "' and status in (1,2) union  select distinct u2id as friends from friends where u1id='" + USER_ID + "' and status in (1,2)) ";
+            var friendsug = await promiseDb.query(friendsql);
+            var countfriendsug = friendsug.length;
+            var friendsug_res = [];
+            var friendsug_resname = [];
+            console.log(countfriendsug);
+            for (var i = 0; i < countfriendsug; i++) {
+                friendsug_res[i] = friendsug[i]['uid'];
+                friendsug_resname[i] = friendsug[i]['fullname'];
             }
-            
-            
 
-            
-       
+            return res.render('home', {
+                page: 'Home Page',
+                success: true,
+                id: USER_ID,
+                name: USER_NAME,
+                posts: num_of_posts,
+                friends: num_of_friends,
+                filters: num_of_filters,
+                friendsuggestion: friendsug_res,
+                friendsuggestionname: friendsug_resname,
+            });
+        } catch (err) {
+            throw new Error(err);
+        }
 
 
-      
-
-    
 
 
-         
+
+
+
+
+
+
+
+
+
     });
 
-    router.post('/home',(req,res,next) => {
-       // console.log(req.body);
+    router.post('/home', (req, res, next) => {
+        // console.log(req.body);
         var postDesc = req.body.postDescription.trim();
         var postTags = req.body.postTags.trim();
         var state = req.body.state.trim();
@@ -205,10 +291,10 @@ module.exports = () => {
         var radius = req.body.postRadius.trim();
         var sch1 = req.body.Schedule1;
 
-       
 
-       
-        
+
+
+
         var fromDate = req.body.postFromDate;
         var toDate = req.body.postToDate;
         var fromTime = req.body.postFromTime;
@@ -219,28 +305,28 @@ module.exports = () => {
         var longitude = resLatLong[1];
 
         console.log(latitude + longitude);
-        if (sch1 == '1'){
+        if (sch1 == '1') {
             fromDate = new Date();
             toDate = new Date();
             toDate.setDate(toDate.getDate() + 1);
 
-           
-            
+
+
             var fDate = fromDate.getFullYear() + "-" + fromDate.getMonth() + "-" + fromDate.getDate();
             var tDate = toDate.getFullYear() + "-" + toDate.getMonth() + "-" + toDate.getDate();
-        }else if (sch1 == '2'){
+        } else if (sch1 == '2') {
             // For a specific Day
-        }else if (sch1 == '3'){
+        } else if (sch1 == '3') {
             // Recurring
             var sch2 = req.body.Schedule2;
-            switch(sch2){
+            switch (sch2) {
                 case '1':
                     var week = req.body.Week;
                     var currDate = new Date();
                     var day = currDate.getDay();
-                    switch(week){
+                    switch (week) {
                         case "1":
-                            
+
                             break;
                         case "2":
                             break;
@@ -262,7 +348,7 @@ module.exports = () => {
                     break;
                 case '4':
                     break;
-                
+
             }
         }
 
@@ -277,6 +363,6 @@ module.exports = () => {
     });
 
 
-    
+
     return router;
 };

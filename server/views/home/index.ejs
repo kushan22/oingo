@@ -1,260 +1,250 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
-    <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-			<link rel="stylesheet" type="text/css" href="/css/stylehome.css">
-			<link href='https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab' rel='stylesheet' type='text/css'>
-                
 
-                
-    </head>
-    <body>
-        <% if (success){ %>
-            
-        <div class="navbar navbar-default navbar-static-top">
-                <div class="container">
-                    <div class="navbar-collapse navbar-collapse-1 collapse" aria-expanded="true">
-                        <ul class="nav navbar-nav">
-                            <li class="active">
-                                <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
-                            </li>
-                            <li>
-                                <a href="#fake"><span class="glyphicon glyphicon-bell"></span> Requests</a>
-                            </li>
-                            <li>
-                                <a href="#fake"><span class="glyphicon glyphicon-envelope"></span> Messages</a>
-                            </li>
-                        </ul>
-                        <div class="navbar-form navbar-right">
-                            <form class="form-inline" action="/logout" method="POST">
-                           <a href="/home/createPost" class="btn btn-info" role="button"><span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>Create Note</a>
-                            <input type="submit"  value="Logout" class="btn btn-info" role="button">
-                        </form>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/stylehome.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab' rel='stylesheet' type='text/css'>
+
+
+
+</head>
+
+<body>
+    <% if (success){ %>
+
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-collapse navbar-collapse-1 collapse" aria-expanded="true">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
+                    </li>
+                    <li>
+                        <a href="/home/friendrequest"><span class="glyphicon glyphicon-bell"></span> Requests</a>
+                    </li>
+                    <li>
+                        <a href="#fake"><span class="glyphicon glyphicon-envelope"></span> Messages</a>
+                    </li>
+                </ul>
+                <div class="navbar-form navbar-right">
+                    <form class="form-inline" action="/logout" method="POST">
+                        <a href="/home/createPost" class="btn btn-info" role="button"><span class="glyphicon glyphicon-pencil"
+                                aria-hidden="true"> </span>Create Note</a>
+                        <input type="submit" value="Logout" class="btn btn-info" role="button">
+                    </form>
+                </div>
+                <div class="navbar-form navbar-right">
+                    <a href="/home/filter" class="btn btn-info" role="button"><span class="glyphicon glyphicon-filter"
+                            aria-hidden="true"> </span>Create Filter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2 style="text-align: center; "> Welcome
+        <%=name%>
+    </h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <a href="#"><img class="img-responsive" alt="" src="http://placehold.it/200x100"></a>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <h5>
+                                    <small>Friends</small>
+                                    <a href="#">
+                                        <%= friends %></a>
+                                </h5>
+                            </div>
+                            <div class="col-xs-3">
+                                <h5>
+                                    <small>Posts</small>
+                                    <a href="#">
+                                        <%= posts %></a>
+                                </h5>
+                            </div>
+                            <div class="col-xs-3">
+                                <h5>
+                                    <small>Filters</small>
+                                    <a href="/home/displayfilter">3</a>
+                                </h5>
+                            </div>
                         </div>
-                        <div class="navbar-form navbar-right">
-                                <a href="/home/filter" class="btn btn-info" role="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"> </span>Create Filter</a>
-                             </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default panel-custom">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Trends
+                            <small><a href="#"></a></small>
+                        </h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            <li><a href="#">#At Lunch</a></li>
+                            <li><a href="#">#At break</a></li>
+                            <li><a href="#">#Just Chilling</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <h2  style="text-align: center; "> Welcome 
-                    <%=name%> 
-            </h2>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <a href="#"><img class="img-responsive" alt="" src="http://placehold.it/200x100"></a>
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <h5>
-                                            <small>Friends</small>
-                                            <a href="#"><%= friends %></a>
-                                        </h5>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <h5>
-                                            <small>Posts</small>
-                                            <a href="#"><%= posts %></a>
-                                        </h5>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <h5>
-                                            <small>Filters</small>
-                                            <a href="/home/displayfilter">3</a>
-                                        </h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            
-                        <div class="panel panel-default panel-custom">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    Trends
-                                    <small><a href="#"></a></small>
-                                </h3>
-                            </div>
-            
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li><a href="#">#At Lunch</a></li>
-                                    <li><a href="#">#At break</a></li>
-                                    <li><a href="#">#Just Chilling</a></li>
+            <div class="col-sm-6">
+                <div class="panel panel-info">
+
+                    <div class="panel-body">
+                        <div class="media">
+                            <a class="media-left" href="#fake">
+                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">NOTE 1</h4>
+                                <p>Food is great at this restaurant. Loved the Sushi.</p>
+                                <ul class="nav nav-pills nav-pills-custom">
+                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
                                 </ul>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="panel panel-info">
-                           
-                            <div class="panel-body">
-                                <div class="media">
-                                    <a class="media-left" href="#fake">
-                                        <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">NOTE 1</h4>
-                                        <p>Food is great at this restaurant. Loved the Sushi.</p>
-                                        <ul class="nav nav-pills nav-pills-custom">
-                                            <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-            
-                                <div class="media">
-                                    <a class="media-left" href="#fake">
-                                        <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">NOTE 2</h4>
-                                        <p>Gazing at the Chelsea Skyline </p>
-                                        <ul class="nav nav-pills nav-pills-custom">
-                                            <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                        </ul>
-                                    </div>
-            
-                                </div>
-                                <div class="media">
-                                    <a class="media-left" href="#fake">
-                                        <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Note 3</h4>
-                                        <p>Not Feeling Great</p>
-                                        <ul class="nav nav-pills nav-pills-custom">
-                                            <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                        </ul>
-                                    </div>
-            
-                                </div>
-                                <div class="media">
-                                    <a class="media-left" href="#fake">
-                                        <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Note 5</h4>
-                                        <p>Chilling at the Football game.</p>
-                                        <ul class="nav nav-pills nav-pills-custom">
-                                            <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                            <li><a href="#"><spgitan class="glyphicon glyphicon-star"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                        </ul>
-                                    </div>
-            
-                                </div>
-                                <div class="media">
-                                    <a class="media-left" href="#fake">
-                                        <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Note 6</h4>
-                                        <p>Cycling at the Brooklyn Bridge</p>
-                                        <ul class="nav nav-pills nav-pills-custom">
-                                            <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                            <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-            
+
+                        <div class="media">
+                            <a class="media-left" href="#fake">
+                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">NOTE 2</h4>
+                                <p>Gazing at the Chelsea Skyline </p>
+                                <ul class="nav nav-pills nav-pills-custom">
+                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="media">
+                            <a class="media-left" href="#fake">
+                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">Note 3</h4>
+                                <p>Not Feeling Great</p>
+                                <ul class="nav nav-pills nav-pills-custom">
+                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="media">
+                            <a class="media-left" href="#fake">
+                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">Note 5</h4>
+                                <p>Chilling at the Football game.</p>
+                                <ul class="nav nav-pills nav-pills-custom">
+                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                    <li><a href="#">
+                                            <span class="glyphicon glyphicon-star"></span>
+                                        </a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="media">
+                            <a class="media-left" href="#fake">
+                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">Note 6</h4>
+                                <p>Cycling at the Brooklyn Bridge</p>
+                                <ul class="nav nav-pills nav-pills-custom">
+                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
+                                </ul>
                             </div>
                         </div>
-            
-                        <br>
-                        <br>
-                        <br>
-            
-            
-                       
+
                     </div>
-            
-                    <div class="col-sm-3">
-                        <div class="panel panel-default panel-custom">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    Friend Suggestions
-                                    <small><a href="#">Refresh</a> ? <a href="#">View all</a></small>
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <img src="http://placehold.it/32x32" alt="" class="media-object img-rounded">
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Kushan </h4>
-                                        <a href="#" class="btn btn-default btn-xs">
-                                            +
-                                            <span class="glyphicon glyphicon-user"></span>
-                                            Add Friend
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-left">
-                                        <img src="http://placehold.it/32x32" alt="" class="media-object img-rounded">
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Aakaash</h4>
-                                        <a href="#" class="btn btn-default btn-xs">
-                                            +
-                                            <span class="glyphicon glyphicon-user"></span>
-                                            Add Friend
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-left">
-                                        <img src="http://placehold.it/32x32" alt="" class="media-object img-rounded">
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Bigsby</h4>
-                                        <a href="#" class="btn btn-default btn-xs">
-                                            +
-                                            <span class="glyphicon glyphicon-user"></span>
-                                            Add Friend
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-footer">
-                                <a href="www.google.it">
-                                    <span class="glyphicon glyphicon-user"></span>
-                                    Find people you know
-                                </a>
-                            </div>
+                </div>
+
+                <br>
+                <br>
+                <br>
+
+
+
+            </div>
+
+            <div class="col-sm-3">
+                <div class="container">
+                    <div class="panel panel-default panel-custom">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                Friend Suggestions
+                                <small><a href="#">Refresh</a> ? <a href="#">View all</a></small>
+                            </h3>
                         </div>
-                        
+                        <div class="panel-body">
+                            <div class="media">
+
+
+                                <div class="media-body">
+                                    <% for (var i=0;i<friendsuggestion.length; i++){ %>
+                                    
+                                        <h4 class="media-heading">
+                                            <%= friendsuggestionname[i] %>
+                                        </h4>
+                                        <a href="/home/friend?uid=<%= friendsuggestion[i] %>" class="btn btn-default btn-xs">
+                                            +
+                                            <span class="glyphicon glyphicon-user"></span>
+                                            Add Friend
+                                        </a>
+                                    
+                                </div>
+                                <%  } %>
+
+                            </div>
+
+                        </div>
+                        <div class="panel-footer">
+                            <a href="www.google.it">
+                                <span class="glyphicon glyphicon-user"></span>
+                                Find people you know
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            
 
-            
-           
 
-            <% } %>
-        
-            <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+
+
+
+    <% } %>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
             
@@ -274,9 +264,12 @@
                         }
                     });
             </script> -->
-            
 
-    
+<script>
+ 
+</script>
 
-    </body>
+
+</body>
+
 </html>
