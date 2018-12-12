@@ -3,6 +3,7 @@ const db = require('../config/database_conn');
 const promiseDb = require('../config/promisedatabaseconn');
 
 
+
 const router = express.Router();
 var sess;
 var USER_ID, USER_NAME;
@@ -77,9 +78,6 @@ module.exports = () => {
 
 
         });
-
-
-
 
     });
 
@@ -282,85 +280,652 @@ module.exports = () => {
 
     });
 
-    router.post('/home', (req, res, next) => {
-        // console.log(req.body);
+    router.post('/home/createPost',(req,res,next) => {
+       // console.log(req.body);
+        var fromDate,toDate,fromtime,toTime,scheduleId,locationId,postId;
         var postDesc = req.body.postDescription.trim();
         var postTags = req.body.postTags.trim();
+
+        console.log(postTags);
         var state = req.body.state.trim();
         var loc = req.body.postLocation.trim();
         var radius = req.body.postRadius.trim();
         var sch1 = req.body.Schedule1;
 
-
-
-
-
-        var fromDate = req.body.postFromDate;
-        var toDate = req.body.postToDate;
-        var fromTime = req.body.postFromTime;
-        var toTime = req.body.postToTime;
-
+        tags = postTags.match(/#[a-z]+/gi);
+       
         var resLatLong = loc.split("_");
-        var latitude = resLatLong[0];
-        var longitude = resLatLong[1];
+        var latitude = (resLatLong[0] * (Math.PI / 180)).toFixed(8);
+        var longitude = (resLatLong[1] * (Math.PI / 180)).toFixed(8) ;
 
-        console.log(latitude + longitude);
-        if (sch1 == '1') {
+        console.log(latitude + ":" + longitude);
+        
+
+
+       console.log(latitude + longitude);
+        if (sch1 == '1'){
             fromDate = new Date();
             toDate = new Date();
             toDate.setDate(toDate.getDate() + 1);
 
-
-
             var fDate = fromDate.getFullYear() + "-" + fromDate.getMonth() + "-" + fromDate.getDate();
             var tDate = toDate.getFullYear() + "-" + toDate.getMonth() + "-" + toDate.getDate();
-        } else if (sch1 == '2') {
+            fromtime = fromDate.getHours() + ":" + fromDate.getMinutes() + ":" + fromDate.getSeconds();
+            toTime = toDate.getHours() + ":" + toDate.getMinutes() + ":" + toDate.getSeconds();
+
+            const sql = "INSERT INTO schedule (schflag) VALUES('1')";
+            db.query(sql,(err,result)=>{
+                
+               if (err){
+                  throw new Error(err);
+               }else{
+                 //  console.log(result['insertId']);
+                   scheduleId = result['insertId'];
+                   var applicableDate = fDate;
+                   for (var i = 0; i < 2; i++){
+                    const sql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fDate+"','"+tDate+"','"+fromtime+"','"+toTime+"','"+applicableDate+"','0')";
+                    db.query(sql,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            
+                            console.log("Success");    
+                        }
+                    });
+                    applicableDate = tDate;                 
+                   }
+                  
+               }
+    
+            });
+
+            const sqlLoc =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+            db.query(sqlLoc,(err,result) => {
+                if (err){
+                    throw new Error(err);
+                }else{
+                    locationId = result['insertId'];
+                    console.log(locationId);
+
+                    const userLocQuery = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                    db.query(userLocQuery,(err,result)=>{
+                        if (err){
+                            throw new Error(err);
+                        }else{
+
+                            const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                            return res.redirect('/home');
+                        }
+                    });
+                    
+                }
+            });
+    
+            
+        }else if (sch1 == '2'){
             // For a specific Day
-        } else if (sch1 == '3') {
+            fromDate = req.body.postFromDate;
+           // toDate = req.body.postToDate;
+
+            fromtime = req.body.postFromTime;
+            toTime = req.body.postToTime;
+
+            fromtime = fromtime.substring(0,fromtime.indexOf(" "));
+            fromdigit = fromtime.substring(0,fromtime.indexOf(":"));
+            if (fromdigit.length == 1){
+                fromtime = "0" + fromtime;
+            }
+            toTime = toTime.substring(0,toTime.indexOf(" "));
+            toDigit = toTime.substring(0,toTime.indexOf(":"));
+            if (fromdigit.length == 1){
+                toTime = "0" + toTime;
+            }
+            fromtime = fromtime + ":00";
+            toTime = toTime + ":00";
+
+
+            const sql = "INSERT INTO schedule (schflag) VALUES('2')";
+            db.query(sql,(err,result)=>{
+                if (err){
+                    throw new Error(err);
+                }else{
+                    scheduleId = result['insertId'];
+                    applicableDate = fromDate;
+                    const innerSql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fromDate+"','"+fromDate+"','"+fromtime+"','"+toTime+"','"+applicableDate+"','0')";
+                    db.query(innerSql,(err,result)=>{
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            console.log("Sucess");
+                        }
+                    });
+                }
+            });
+
+            const sqlLoc =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+            db.query(sqlLoc,(err,result) => {
+                if (err){
+                    throw new Error(err);
+                }else{
+                    locationId = result['insertId'];
+                    console.log(locationId);
+
+                    const userLocQuery = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                    db.query(userLocQuery,(err,result)=>{
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                            
+                            return res.redirect('/home');
+                        }
+                    });
+                }
+            });
+            
+            //console.log("From Date: " + fromDate + " To Date:" + toDate);
+        }else if (sch1 == '3'){
             // Recurring
             var sch2 = req.body.Schedule2;
             switch (sch2) {
                 case '1':
+                    var applicableDate;
                     var week = req.body.Week;
                     var currDate = new Date();
+                    console.log(currDate);
+                   // console.log("Current Date: " + currDate);
                     var day = currDate.getDay();
-                    switch (week) {
-                        case "1":
-
-                            break;
-                        case "2":
-                            break;
-                        case "3":
-                            break;
-                        case "4":
-                            break;
-                        case "5":
-                            break;
-                        case "6":
-                            break;
-                        case "7":
-                            break;
+                   // console.log("CurrentDayofWeek " + day + " DayofWeekSelected " + week);
+                    while (day != week){
+                        day = (day + 1) % 7;
+                        currDate.setDate(currDate.getDate() + 1);
                     }
+
+                    console.log(currDate);
+
+                    fromDate = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + currDate.getDate();
+                    toDate = req.body.postFromDate;
+
+                    fromtime = req.body.postFromTime;
+                    toTime = req.body.postToTime;
+
+                    fromtime = fromtime.substring(0,fromtime.indexOf(" "));
+                    fromdigit = fromtime.substring(0,fromtime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        fromtime = "0" + fromtime;
+                    }
+                    toTime = toTime.substring(0,toTime.indexOf(" "));
+                    toDigit = toTime.substring(0,toTime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        toTime = "0" + toTime;
+                    }
+                    fromtime = fromtime + ":00";
+                    toTime = toTime + ":00";
+
+                    applicableDate = new Date();
+
+                    
+                    var toDateDummy = new Date(toDate);
+
+                    const sql = "INSERT INTO schedule (schflag) VALUES('4')";
+                    db.query(sql,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            scheduleId = result['insertId'];
+                            while(applicableDate < toDateDummy){
+                                
+                                var appDate = applicableDate.getFullYear() + "-" + (applicableDate.getMonth() + 1) + "-" + applicableDate.getDate();
+                                const innerSql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fromDate+"','"+toDate+"','"+fromtime+"','"+toTime+"','"+appDate+"','7')";
+                                db.query(innerSql,(err,result) => {
+                                    if (err){
+                                        throw new Error(err);
+                                    }else{
+                                        console.log("Sucess");
+                                    }
+                                });
+                                applicableDate.setDate(applicableDate.getDate() + 7);
+                                
+                            }
+                            
+                        }
+                    });
+                
+                    const sqlLoc1 =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+                    db.query(sqlLoc1,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            locationId = result['insertId'];
+                            const userLocQuery = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                            db.query(userLocQuery,(err,result)=>{
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                                    return res.redirect('/home');
+                                }
+                            });
+                        }
+                    });
+
+                    
+                    
+                    
+
+                    
                     break;
                 case '2':
+                var applicableDate;
+                var week = req.body.Week;
+                var currDate = new Date();
+                console.log(currDate);
+               // console.log("Current Date: " + currDate);
+                var day = currDate.getDay();
+               // console.log("CurrentDayofWeek " + day + " DayofWeekSelected " + week);
+                while (day != week){
+                    day = (day + 1) % 7;
+                    currDate.setDate(currDate.getDate() + 1);
+                }
+
+                console.log(currDate);
+
+                fromDate = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + currDate.getDate();
+                toDate = req.body.postFromDate;
+
+                fromtime = req.body.postFromTime;
+                toTime = req.body.postToTime;
+
+                fromtime = fromtime.substring(0,fromtime.indexOf(" "));
+                fromdigit = fromtime.substring(0,fromtime.indexOf(":"));
+                if (fromdigit.length == 1){
+                    fromtime = "0" + fromtime;
+                }
+                toTime = toTime.substring(0,toTime.indexOf(" "));
+                toDigit = toTime.substring(0,toTime.indexOf(":"));
+                if (fromdigit.length == 1){
+                    toTime = "0" + toTime;
+                }
+                fromtime = fromtime + ":00";
+                toTime = toTime + ":00";
+
+                applicableDate = new Date();
+
+                
+                var toDateDummy = new Date(toDate);
+
+                const sql1 = "INSERT INTO schedule (schflag) VALUES('4')";
+                db.query(sql1,(err,result) => {
+                    if (err){
+                        throw new Error(err);
+                    }else{
+                        scheduleId = result['insertId'];
+                        while(applicableDate < toDateDummy){
+                            
+                            var appDate = applicableDate.getFullYear() + "-" + (applicableDate.getMonth() + 1) + "-" + applicableDate.getDate();
+                            const innerSql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fromDate+"','"+toDate+"','"+fromtime+"','"+toTime+"','"+appDate+"','14')";
+                            db.query(innerSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    console.log("Sucess");
+                                }
+                            });
+                            applicableDate.setDate(applicableDate.getDate() + 14);
+                            
+                        }
+                       
+                    }
+                });
+
+                const sqlLoc2 =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+                db.query(sqlLoc2,(err,result) => {
+                    if (err){
+                        throw new Error(err);
+                    }else{
+                        locationId = result['insertId'];
+                        const userLocQuery1 = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                        db.query(userLocQuery1,(err,result)=>{
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                            return res.redirect('/home');
+                        }
+                    });
+                    }
+                });
+                    
                     break;
                 case '3':
+                    fromDate = req.body.postFromDate;
+                    toDate = req.body.postToDate;
+                    fromtime = req.body.postFromTime;
+                    toTime = req.body.postToTime;
+
+                    
+
+                    fromtime = fromtime.substring(0,fromtime.indexOf(" "));
+                    fromdigit = fromtime.substring(0,fromtime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        fromtime = "0" + fromtime;
+                    }
+                    toTime = toTime.substring(0,toTime.indexOf(" "));
+                    toDigit = toTime.substring(0,toTime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        toTime = "0" + toTime;
+                    }
+                    fromtime = fromtime + ":00";
+                    toTime = toTime + ":00";
+
+                    var dummyFromDate = new Date(fromDate);
+                    var dummyTodate = new Date(toDate);
+                    var applicableDate = dummyFromDate;
+                 //   console.log(applicableDate);
+
+                    const sql2 = "INSERT INTO schedule (schflag) VALUES('4')";
+                    db.query(sql2,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            scheduleId = result['insertId'];
+                            while (applicableDate <= dummyTodate){
+                                var appDate = applicableDate.getFullYear() + "-" + (applicableDate.getMonth() + 1) + "-" + (applicableDate.getDate()+1);
+                                console.log(appDate);
+                                const innerSql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fromDate+"','"+toDate+"','"+fromtime+"','"+toTime+"','"+appDate+"','30')";
+                                db.query(innerSql,(err,result) => {
+                                    if (err){
+                                        throw new Error(err);
+                                    }else{
+                                        console.log("Sucess");
+                                    }
+                                });
+                                if (applicableDate.getMonth() == 0 || applicableDate.getMonth() == 2 || applicableDate.getMonth() == 4 || applicableDate.getMonth() == 6 || applicableDate.getMonth() == 7 || applicableDate.getMonth() == 9 || applicableDate.getMonth() == 11){
+                                    applicableDate.setDate(applicableDate.getDate() + 31);
+                                }else if (applicableDate.getMonth() == 1) {
+                                    if (applicableDate.getFullYear() % 4 == 0){
+                                        applicableDate.setDate(applicableDate.getDate() + 29);
+                                    }else{
+                                        applicableDate.setDate(applicableDate.getDate() + 28);   
+                                    }    
+                                }else{
+                                    applicableDate.setDate(applicableDate.getDate() + 30);
+                                }
+                               
+                                
+                            }
+                          
+                        }
+                    });
+
+                    const sqlLoc3 =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+                    db.query(sqlLoc3,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            locationId = result['insertId'];
+                            const userLocQuery2 = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                            db.query(userLocQuery2,(err,result)=>{
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                                    return res.redirect('/home');
+                                }
+                            });
+                        }
+                    });
+
+                    
+                    
+
+                
+
+                    
                     break;
+                    
+                    
                 case '4':
+                    var currDate = new Date();
+                    toDate = req.body.postFromDate;
+                    fromtime = req.body.postFromTime;
+                    toTime = req.body.postToTime;
+
+                    fromtime = fromtime.substring(0,fromtime.indexOf(" "));
+                    fromdigit = fromtime.substring(0,fromtime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        fromtime = "0" + fromtime;
+                    }
+                    toTime = toTime.substring(0,toTime.indexOf(" "));
+                    toDigit = toTime.substring(0,toTime.indexOf(":"));
+                    if (fromdigit.length == 1){
+                        toTime = "0" + toTime;
+                    }
+                    fromtime = fromtime + ":00";
+                    toTime = toTime + ":00";
+
+                    fromDate = currDate.getFullYear() + "-" + (currDate.getMonth() + 1) + "-" + currDate.getDate();
+
+                    var dummyToDate = new Date(toDate);
+                    var applicableDate = new Date(currDate);
+
+                    
+                    const sql4 = "INSERT INTO schedule (schflag) VALUES('3')";
+                    db.query(sql4,(err,result)=>{
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            scheduleId = result['insertId'];
+                            while (applicableDate <= dummyToDate){
+                                var appDate = applicableDate.getFullYear() + "-" + (applicableDate.getMonth() + 1)  + "-" + applicableDate.getDate();
+                                const innerSql = "INSERT INTO scheduling_details (schid,from_date,to_date,from_time,to_time,applicable_date,skip_period) VALUES('"+result['insertId']+"','"+fromDate+"','"+toDate+"','"+fromtime+"','"+toTime+"','"+appDate+"','0')";
+                                db.query(innerSql,(err,result)=>{
+                                    if (err){
+                                        throw new Error(err);
+                                    }else{
+                                        console.log("Success");
+                                    }
+                                });
+
+                                applicableDate.setDate(applicableDate.getDate() + 1);
+                            }
+
+                           
+                        }
+                    });
+
+                   
+                    const sqlLoc4 =  "INSERT INTO location (latitude,longitude,radius) VALUES('"+latitude+"','"+longitude+"','"+radius+"')";
+                    db.query(sqlLoc4,(err,result) => {
+                        if (err){
+                            throw new Error(err);
+                        }else{
+                            locationId = result['insertId'];
+                            const userLocQuery3 = "INSERT INTO user_location (uid,lid) VALUES('"+USER_ID+"','"+locationId+"')";
+                            db.query(userLocQuery3,(err,result)=>{
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
+                            db.query(postSql,(err,result) => {
+                                if (err){
+                                    throw new Error(err);
+                                }else{
+                                    postId = result['insertId'];
+                                    
+                                    for (var i = 0; i < tags.length; i++){
+                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                        db.query(tagSql,(err,result) => {
+                                            if (err){
+                                                throw new Error(err);
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                db.query(postTagSql,(err,result) => {
+                                                    if (err){
+                                                        throw new Error(err);
+                                                    }else{
+                                                        console.log("Done");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+
+                            });
+                                    return res.redirect('/home');
+                                }
+                            });
+                        }
+                    });
+
+                    
                     break;
 
             }
         }
 
-        console.log(fDate + ":" + tDate);
+        
+
+       
 
 
 
 
 
 
-        return res.send("Awesome");
-    });
+   // return res.redirect('/home');
+     });
 
 
 
