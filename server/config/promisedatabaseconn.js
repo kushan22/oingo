@@ -2,21 +2,21 @@ const mysql = require('mysql');
 const util = require('util');
 
 
-    
+
 const pool = mysql.createPool({
-        host: "localhost",
-        user : "root",
-        password: "Coldplay1",
-        database: "oingo",
-        port: 8889,
+    host: "MSI",
+    user: "master",
+    password: "master",
+    database: "sys",
+    port: 3306,
 
-    });
+});
 
-pool.getConnection((err,connection)=>{
-    if (err){
+pool.getConnection((err, connection) => {
+    if (err) {
         console.log("Error");
     }
-    if (connection){
+    if (connection) {
         connection.release();
     }
 
