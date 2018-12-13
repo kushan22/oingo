@@ -251,21 +251,57 @@ module.exports = () => {
 
             // Getting the posts
                     
+            var filterSql = "SELECT * from filter_save where uid = '"+USER_ID+"'";
+            var filterRes = await promiseDb.query(filterSql);
 
+            if (filterRes.length == 0){
+                var postSql = "SELECT pid,state,description from posts where uid = '"+USER_ID+"'";
+                var postsResult = await promiseDb.query(postSql);
+    
+                var allPosts = [];
+                for (var c = 0; c < postsResult.length; c++){
+                     allPosts.push({
+                         state: postsResult[c]['state'],
+                         description: postsResult[c]['description']
+                     });
+                }
+            }else{
+                var input_lat = filterRes[0]['flatitude'];
+                var input_lon = filterRes[0]['flongitude'];
+                var radius = filterRes[0]['radius'];
 
+                
+                
+                var r = (radius / 6371).toFixed(8);
+                
+                var minLat = input_lat - r
+                var maxLat = parseFloat(input_lat) + parseFloat(r)
+               
+                var deltaLon = (Math.asin(Math.sin(r)/Math.cos(input_lat))).toFixed(8);
 
-            var postSql = "SELECT pid,state,description from posts where uid = '"+USER_ID+"'";
-            var postsResult = await promiseDb.query(postSql);
+                var minLon = input_lon - deltaLon;
+                var maxLon = parseFloat(input_lon) + parseFloat(deltaLon);
 
-            var allPosts = [];
-            for (var c = 0; c < postsResult.length; c++){
-                 allPosts.push({
-                     state: postsResult[c]['state'],
-                     description: postsResult[c]['description']
-                 });
+                var sql = "select posts.pid,posts.state,posts.description from posts where posts.lid in (select location.lid from location ,filter_save where (location.latitude >="+minLat+" and location.latitude <="+maxLat+") and (location.longitude >="+minLon+" and location.longitude <="+maxLon+") and acos(sin(filter_save.flatitude) * sin(location.latitude) + cos(filter_save.flatitude) * cos(location.latitude) * cos(location.longitude -  filter_save.flongitude)) <="+r+" and filter_save.uid='"+USER_ID+"') and posts.schid in (select scheduling_details.schid from scheduling_details ,filter_save where filter_save.filter_date = scheduling_details.applicable_date and filter_save.filter_from_time <= scheduling_details.from_time and filter_save.filter_to_time >= scheduling_details.to_time and filter_save.uid = '"+USER_ID+"') and posts.pid in (select pt.pid from post_tag as pt where pt.tagid in (select t.tagid from tag as t,filter_save as fs where t.tagname = fs.tag and fs.uid='"+USER_ID+"')) and posts.state in (select filter_save.state from filter_save where filter_save.uid='"+USER_ID+"')";
+                console.log(sql);
+
+                var resultFiltererdPosts = await promiseDb.query(sql);
+                var allPosts = [];
+                for (var c = 0; c < resultFiltererdPosts.length; c++){
+                     allPosts.push({
+                         state: resultFiltererdPosts[c]['state'],
+                         description: resultFiltererdPosts[c]['description']
+                     });
+                }
+
+               
+
             }
 
-           // console.log(allPosts);
+
+          
+            //return next();
+            
 
 
             return res.render('home', {
@@ -285,26 +321,15 @@ module.exports = () => {
         }
 
 
+});
 
-
-
-
-
-
-
-
-
-
-
-    });
-
-    router.post('/home/createPost',(req,res,next) => {
+    router.post('/home/createPost',async (req,res,next) => {
        // console.log(req.body);
         var fromDate,toDate,fromtime,toTime,scheduleId,locationId,postId;
         var postDesc = req.body.postDescription.trim();
         var postTags = req.body.postTags.trim();
 
-        console.log(postTags);
+       // console.log(postTags);
         var state = req.body.state.trim();
         var loc = req.body.postLocation.trim();
         var radius = req.body.postRadius.trim();
@@ -316,7 +341,7 @@ module.exports = () => {
         var latitude = (resLatLong[0] * (Math.PI / 180)).toFixed(8);
         var longitude = (resLatLong[1] * (Math.PI / 180)).toFixed(8) ;
 
-        console.log(latitude + ":" + longitude);
+       // console.log(latitude + ":" + longitude);
         
 
 
@@ -372,28 +397,47 @@ module.exports = () => {
                         }else{
 
                             const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                       // console.log(tags);
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
+                                   
+                                        
                                     }
                                 }
 
@@ -460,28 +504,45 @@ module.exports = () => {
                             throw new Error(err);
                         }else{
                             const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
+
                                     }
                                 }
 
@@ -573,28 +634,44 @@ module.exports = () => {
                                     throw new Error(err);
                                 }else{
                                     const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
                                     }
                                 }
 
@@ -686,28 +763,44 @@ module.exports = () => {
                             throw new Error(err);
                         }else{
                             const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
                                     }
                                 }
 
@@ -792,28 +885,44 @@ module.exports = () => {
                                     throw new Error(err);
                                 }else{
                                     const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
                                     }
                                 }
 
@@ -895,28 +1004,44 @@ module.exports = () => {
                                     throw new Error(err);
                                 }else{
                                     const postSql = "INSERT INTO posts (description,state,lid,schid,uid,c_flag,access_flag) VALUES('"+postDesc+"','"+state+"','"+locationId+"','"+scheduleId+"','"+USER_ID+"','1','3')";
-                            db.query(postSql,(err,result) => {
+                            db.query(postSql,async (err,result) => {
                                 if (err){
                                     throw new Error(err);
                                 }else{
                                     postId = result['insertId'];
                                     
                                     for (var i = 0; i < tags.length; i++){
-                                        const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
-                                        db.query(tagSql,(err,result) => {
-                                            if (err){
-                                                throw new Error(err);
-                                            }else{
-                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
-                                                db.query(postTagSql,(err,result) => {
+                                        const checkTagSql = "SELECT tagid,tagname from tag where tagname='"+tags[i]+"'";
+                                        var result = await promiseDb.query(checkTagSql);
+
+                                        
+                                            if (result.length == 0){
+                                                //console.log(tags[i]);
+                                                const tagSql = "INSERT INTO tag (tagname) VALUES('"+tags[i]+"')";
+                                                db.query(tagSql,(err,result) => {
                                                     if (err){
                                                         throw new Error(err);
                                                     }else{
-                                                        console.log("Done");
+                                                        const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result['insertId']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                            }else{
+                                                const postTagSql = "INSERT INTO post_tag (pid,tagid) VALUES('"+postId+"','"+result[0]['tagid']+"')";
+                                                        db.query(postTagSql,(err,result) => {
+                                                            if (err){
+                                                                throw new Error(err);
+                                                            }else{
+                                                                console.log("Done");
+                                                            }
+                                                        });
                                             }
-                                        });
                                     }
                                 }
 
