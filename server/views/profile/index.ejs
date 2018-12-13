@@ -6,11 +6,9 @@
 <body>
         <h1 class="title-pen"> OINGO User Profile </h1>
         <div class="user-profile">
-            <img class="avatar" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTF_erFD1SeUnxEpvFjzBCCDxLvf-wlh9ZuPMqi02qGnyyBtPWdE-3KoH3s" alt="Ash" />
-            <div class="username">Will Smith</div>
-          <div class="bio">
-              uname
-          </div>
+            <img class="avatar" src="/avatar.png"  />
+            <div class="username"><%=name %></div>
+          
             <br/>
             <br/>
             <br/>
@@ -29,10 +27,14 @@
             </li>
          </ul>
 
-         <footer>
+         <footer>   
+                <form action="/home/profile" method="POST">
                     <h1>
                     State
+                    <textarea name="State"  id="State" rows="1"></textarea>
                 </h1>
+                <input type= "submit" value="Submit"></input>
+                </form>
             </footer>
         </div>
           
