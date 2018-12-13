@@ -295,7 +295,24 @@ module.exports = () => {
     });
 
     router.get('/home/profile', async (req, res, next) => {
-        return res.render('profile');
+        return res.render('profile',{
+            name: USER_NAME,
+            id: USER_ID,
+        });
+    });
+
+
+    router.post('/home/profile', async (req, res, next) => {
+      var userid=USER_ID;
+      console.log("In post of profile");
+      var state = req.body.State.trim();
+      try{
+      var friendsql = "update user set state= '"+state+"' where uid='"+userid+"'";
+      var stateupdate = await promiseDb.query(friendsql);
+    }catch(err){
+        throw new Error(err);
+    }
+    return res.redirect('/home');
     });
 
 
