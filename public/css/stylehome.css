@@ -47,4 +47,6 @@ div.panel-heading{
 	border:1px lightgrey solid;
 }
 
-
+.container{
+	height: 100%;
+}

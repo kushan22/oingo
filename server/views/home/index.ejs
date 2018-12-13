@@ -59,21 +59,21 @@
                             <div class="col-xs-3">
                                 <h5>
                                     <small>Friends</small>
-                                    <a href="#">
-                                        <%= friends %></a>
+                                    <p>
+                                        <%= friends %></p>
                                 </h5>
                             </div>
                             <div class="col-xs-3">
                                 <h5>
                                     <small>Posts</small>
-                                    <a href="#">
-                                        <%= posts %></a>
+                                    <p>
+                                        <%= posts %></p>
                                 </h5>
                             </div>
                             <div class="col-xs-3">
                                 <h5>
                                     <small>Filters</small>
-                                    <a href="/home/displayfilter">3</a>
+                                    <p><%= filters %> </p>
                                 </h5>
                             </div>
                         </div>
@@ -194,45 +194,42 @@
 
             </div>
 
-            <div class="col-sm-3">
-                <div class="container">
-                    <div class="panel panel-default panel-custom">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                Friend Suggestions
-                                <small><a href="#">Refresh</a> ? <a href="#">View all</a></small>
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="media">
+            <div class="col-sm-3" style=" height:600px;"  >
+
+                <div class="panel mx-2">
+
+                    <div >
+                        <h3>
+                            Friend Suggestions
+
+                        </h3>
+                    </div>
+                    <div >
+                        <div >
 
 
-                                <div class="media-body">
-                                    <% for (var i=0;i<friendsuggestion.length; i++){ %>
-                                    
-                                        <h4 class="media-heading">
-                                            <%= friendsuggestionname[i] %>
-                                        </h4>
-                                        <a href="/home/friend?uid=<%= friendsuggestion[i] %>" class="btn btn-default btn-xs">
-                                            +
-                                            <span class="glyphicon glyphicon-user"></span>
-                                            Add Friend
-                                        </a>
-                                    
-                                </div>
+                            <div >
+                                <% for (var i=0;i<friendsuggestion.length; i++){ %>
+
+                                <h4 class="media-heading">
+                                    <%= friendsuggestionname[i] %>
+                                </h4>
+                                <a href="/home/friend?uid=<%= friendsuggestion[i] %>" class="btn btn-default btn-xs">
+                                    +
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    Add Friend
+                                </a>
+                                <br/>
                                 <%  } %>
-
+                                <br/>
                             </div>
+                            
 
                         </div>
-                        <div class="panel-footer">
-                            <a href="www.google.it">
-                                <span class="glyphicon glyphicon-user"></span>
-                                Find people you know
-                            </a>
-                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -265,9 +262,9 @@
                     });
             </script> -->
 
-<script>
- 
-</script>
+    <script>
+
+    </script>
 
 
 </body>
