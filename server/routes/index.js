@@ -343,7 +343,10 @@ module.exports = () => {
 });
 
 router.get('/home/profile', async (req, res, next) => {
-    return res.render('profile');
+    return res.render('profile',{
+        name: USER_NAME,
+        id: USER_ID,
+    });
 });
 
 router.post('/home/profile', async (req, res, next) => {
