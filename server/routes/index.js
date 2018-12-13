@@ -323,6 +323,10 @@ module.exports = () => {
 
 });
 
+router.get('/home/profile', async (req, res, next) => {
+    return res.render('profile');
+});
+
     router.post('/home/createPost',async (req,res,next) => {
        // console.log(req.body);
         var fromDate,toDate,fromtime,toTime,scheduleId,locationId,postId;
