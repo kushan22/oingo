@@ -21,33 +21,33 @@
         <div class="jumbotron" style="width:100%;height:100%; min-height: 300px;">
 
             <form class="form-group" action="/home/createPost" method="POST">
+        
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name = "postDescription" class="form-control rounded-0" id="description" rows="3"></textarea>
+                <label for="tag">Tag</label>
+                <textarea name = "postTags" class="form-control rounded-0" id="tag" rows="1"></textarea>
+                <label for="tag">State</label>
+                <select id="state" name="state">
+                    <option value="Chilling">Chilling</option>
+                    <option value="At Lunch">At Lunch</option>
+                    <option value="Busy">Busy</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea name="postDescription" class="form-control rounded-0" id="description" rows="3"></textarea>
-                    <label for="tag">Tag</label>
-                    <textarea name="postTags" class="form-control rounded-0" id="tag" rows="1"></textarea>
-                    <label for="tag">State</label>
-                    <select id="state" name="state">
-                        <option value="Chilling">Chilling</option>
-                        <option value="At Lunch">At Lunch</option>
-                        <option value="Busy">Busy</option>
-                    </select>
+            <div>
+                <div class="d-inline">
+                    <label for="location">Location</label>
+                    <input name = "postLocation" id="autocomplete" placeholder="Enter your address" type="text"></input>
+                    Or
+                    <input  id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
                 </div>
-
-                <div>
-                    <div class="d-inline">
-                        <label for="location">Location</label>
-                        <input name="postLocation" id="autocomplete" placeholder="Enter your address" type="text"></input>
-                        Or
-                        <input id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
-                    </div>
-                    <div class="d-inline">
-                        <label for="radius">Radius</label>
-                        <input name="postRadius" type="text" id="radius" rows="1">
-                    </div>
+                <div class="d-inline">
+                    <label for="radius">Radius</label>
+                    <input name="postRadius" type="text" id="radius" rows="1">
                 </div>
-                <!-- <div style="float:left">
+            </div>
+            <!-- <div style="float:left">
                                 <p>Date: <input type="text" id="datepicker"></p>
                         </div>
                         <div  style="float:left">
@@ -56,60 +56,60 @@
 
 
 
-                <!--Schedule div-->
-                <div class="form-group">
-                    Schedule
-                    <div class="d-inline">
-                        <select name="Schedule1" id="Schedule1">
-                            <option value="0">Select One</option>
-                            <option value="1">For 24 Hours</option>
-                            <option value="2">Specific Date</option>
-                            <option value="3">Recurring</option>
-                        </select>
-                    </div>
-                    <div class="d-inline" id="Sch2" style="visibility:hidden;">
-                        <select id="Schedule2" name="Schedule2">
-                            <option value="0">Select One</option>
-                            <option value="1">Weekly</option>
-                            <option value="2">Biweekly</option>
-                            <option value="3">Monthly</option>
-                            <option value="4">Upto a specific date</option>
-                        </select>
-
-                    </div>
-                    <div class="d-inline">
-                        <select name="Week" id="Week" style="visibility:hidden">
-                            <option value="100">Select One</option>
-                            <option value="1">Monday</option>
-                            <option value="2">Tuesday</option>
-                            <option value="3">Wednesday</option>
-                            <option value="4">Thursday</option>
-                            <option value="5">Friday</option>
-                            <option value="6">Saturday</option>
-                            <option value="0">Sunday</option>
-                        </select>
-
-                    </div>
-
+            <!--Schedule div-->
+            <div class="form-group">
+                Schedule
+                <div class="d-inline">
+                    <select name="Schedule1" id="Schedule1">
+                        <option value="0">Select One</option>
+                        <option value="1">For 24 Hours</option>
+                        <option value="2">Specific Date</option>
+                        <option value="3">Recurring</option>
+                    </select>
+                </div>
+                <div class="d-inline " id="Sch2" style="visibility:hidden;">
+                    <select id="Schedule2" name="Schedule2">
+                        <option value="0">Select One</option>
+                        <option value="1">Weekly</option>
+                        <option value="2">Biweekly</option>
+                        <option value="3">Monthly</option>
+                        <option value="4">Upto a specific date</option>
+                    </select>
 
                 </div>
-                
-                    <div id="DateFromdiv" style="visibility:hidden">
-                        <p>Date From:<input name="postFromDate" id="DateFrom" type="date"></p>
-                    </div>
-                    <div id="DateTodiv" style="visibility:hidden">
-                        <p>Date To:<input name="postToDate" id="DateTo" type="date"></p>
-                    </div>
-                    <div id="TimeFromDiv" style="visibility:hidden">
-                        <p>Time From:<input name="postFromTime" id="timepicker5" type="text" class="input-small"></p>
-                    </div>
-                    <div id="TimeToDiv" style="visibility:hidden">
-                        <p>Time To:<input name="postToTime" id="timepicker6" type="text" class="input-small"></p>
-                    </div>
-                
+                <div class="d-inline">
+                    <select name="Week" id="Week" style="visibility:hidden">
+                        <option value="100">Select One</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                        <option value="0">Sunday</option>
+                    </select>
+
+                </div>
 
 
-                <input type="submit" value="Post">
+            </div>
+            <div class="d-inline" style="float:left;" id="dp1">
+                <div id="DateFromdiv" style="visibility:hidden">
+                    <p>Date From:<input name="postFromDate" id="DateFrom" type="date"></p>
+                </div>
+                <div id="DateTodiv" style="visibility:hidden">
+                    <p>Date To:<input name="postToDate" id="DateTo" type="date"></p>
+                </div>
+                <div id="TimeFromDiv" style="visibility:hidden">
+                    <p>Time From:<input name="postFromTime" id="timepicker5" type="text" class="input-small"></p>
+                </div>
+                <div id="TimeToDiv" style="visibility:hidden">
+                    <p>Time To:<input name="postToTime" id="timepicker6" type="text" class="input-small"></p>
+                </div>
+            </div>
+           
+
+              <input type="submit" value="Post">
 
             </form>
 
@@ -192,8 +192,7 @@
             }
         }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeYLbu7kilhYeIsgwY8u_QB0RuETgJcHo&libraries=places&callback=initAutocomplete"
-        async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeYLbu7kilhYeIsgwY8u_QB0RuETgJcHo&libraries=places&callback=initAutocomplete" async defer></script>
     <!--  <script>
     $(function () {
         $("#datepicker").datepicker();
@@ -205,15 +204,15 @@
     <script>
         $(function () {
             $('#timepicker5').timepicker({
-                template: false,
-                showInputs: false,
-                minuteStep: 5
-            });
-            $('#timepicker6').timepicker({
-                template: false,
-                showInputs: false,
-                minuteStep: 5
-            });
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
+                        $('#timepicker6').timepicker({
+                            template: false,
+                            showInputs: false,
+                            minuteStep: 5
+                        });
             console.log("Ready");
             $("#Schedule1").on('change', function () {
                 if ($(this).val() === "3") {
@@ -267,7 +266,7 @@
                         $("#DateTodiv").css("visibility", "visible");
                         $("#TimeFromDiv").css("visibility", "visible");
                         $("#TimeToDiv").css("visibility", "visible");
-
+                        
                     } else {
                         $("#dp1").css("visibility", "hidden");
                     }
@@ -289,12 +288,12 @@
                 }
             });
 
-
+            
 
         });
 
-
-
+     
+        
 
     </script>
 
