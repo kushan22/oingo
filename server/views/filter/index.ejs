@@ -26,9 +26,9 @@
                 <textarea name="filtertag" class="form-control rounded-0" id="tag" rows="1"></textarea>
                 <label for="state">State</label>
                 <select name = "filterState" id="state">
-                    <option value="Chilling">Chilling</option>
-                    <option value="At Lunch">At Lunch</option>
-                    <option value="Busy">Busy</option>
+                    <% for (var i = 0; i < states.length; i++){ %>
+                        <option value="<%=states[i] %>"><%= states[i] %></option>
+                     <% } %>
                 </select>
             </div>
 

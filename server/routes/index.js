@@ -203,15 +203,34 @@ module.exports = () => {
         });
     });
 
-    router.get('/home/createPost', (req, res, next) => {
+    router.get('/home/createPost', async (req, res, next) => {
         console.log("Called Create Post");
+        var statesSql = "SELECT posts.state from posts UNION SELECT user.state from user where user.uid = '"+USER_ID+"'";
+        var resultState = await promiseDb.query(statesSql);
+        var allStates = [];
+        for (var i = 0; i < resultState.length; i++){
+            allStates[i] = resultState[i]['state'];
+        }
+        console.log(allStates);
         // sess = req.session;
-        return res.render('createPost');
+        return res.render('createPost',{
+            states:allStates
+        });
     });
 
-    router.get('/home/filter', (req, res, next) => {
+    router.get('/home/filter', async (req, res, next) => {
         // sess = req.session;
-        return res.render('filter');
+        var statesSql = "SELECT posts.state from posts UNION SELECT user.state from user where user.uid = '"+USER_ID+"'";
+        var resultState = await promiseDb.query(statesSql);
+        var allStates = [];
+        for (var i = 0; i < resultState.length; i++){
+            allStates[i] = resultState[i]['state'];
+        }
+        console.log(allStates);
+        // sess = req.session;
+        return res.render('filter',{
+            states:allStates
+        }); 
     });
 
     router.post('home/filter', (req, res, next) => {
