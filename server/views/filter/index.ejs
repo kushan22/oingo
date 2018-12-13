@@ -20,28 +20,28 @@
         <h1>Filter Post</h1>
         <div class="jumbotron" style="width:100%;height:100%; min-height: 300px;">
 
-
+          <form class="form-group" action="/home/filter" method="POST" >  
             <div class="form-group">
                 <label for="tag">Tag</label>
-                <textarea class="form-control rounded-0" id="tag" rows="1"></textarea>
-                <label for="tag">State</label>
-                <select id="state" name="state">
-                    <option value="1">State1</option>
-                    <option value="2">State2</option>
-                    <option value="3">State3</option>
+                <textarea name="filtertag" class="form-control rounded-0" id="tag" rows="1"></textarea>
+                <label for="state">State</label>
+                <select name = "filterState" id="state">
+                    <option value="Chilling">Chilling</option>
+                    <option value="At Lunch">At Lunch</option>
+                    <option value="Busy">Busy</option>
                 </select>
             </div>
 
             <div>
                 <div class="d-inline">
                     <label for="location">Location</label>
-                    <input id="autocomplete" placeholder="Enter your address" type="text"></input>
+                    <input name = "filterLocation" id="autocomplete" placeholder="Enter your address" type="text" value=""></input>
                     Or
                     <input id="currentaddress" value="Current Location" onClick="currLoc()" type="button"></input>
                 </div>
                 <div class="d-inline">
                     <label for="radius">Radius</label>
-                    <input type="text" id="radius" rows="1">
+                    <input name="filterRadius" type="text" id="radius" rows="1">
                 </div>
             </div>
             <!-- <div style="float:left">
@@ -59,20 +59,24 @@
 
 
                 <div id="DateTodiv">
-                    <p>Date To:<input id="DateTo" type="date"></p>
+                    <p>Date To:<input name="filterDate" id="DateTo" type="date"></p>
                 </div>
                 <div id="TimeFromDiv">
-                    <p>Time From:<input id="timepicker5" type="text" class="input-small"></p>
+                    <p>Time From:<input name="filterFromTime" id="timepicker5" type="text" class="input-small"></p>
                 </div>
                 <div id="TimeToDiv">
-                    <p>Time To:<input id="timepicker6" type="text" class="input-small"></p>
+                    <p>Time To:<input name="filterToTime" id="timepicker6" type="text" class="input-small"></p>
                 </div>
 
-                <input type="button" value="Save Filter" onClick="filterSave()">
+                <input type="submit" value="Save Filter">
+
+
                 
             </div>
 
-
+</form>
+</div>
+</div>
 
 
             <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -114,6 +118,7 @@
                         var latitude = position.coords.latitude;
                         var longitude = position.coords.longitude;
                         alert(latitude + " " + longitude);
+                        document.getElementById('autocomplete').value = latitude + "_" + longitude;
                     }
                     function error() { 
                         alert("Unable to retrieve your location");
@@ -132,6 +137,8 @@
 
                             console.log(Latitude);
                             console.log(Longitude);
+
+                            document.getElementById('autocomplete').value = Latitude + "_" + Longitude;
                         }
 
                         else {
@@ -145,9 +152,9 @@
                         console.log("found");
                     }
                 }
-                function filterSave(){
-                    self.location="/home";
-                }
+                // function filterSave(){
+                //     self.location="/home";
+                // }
             </script>
             <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeYLbu7kilhYeIsgwY8u_QB0RuETgJcHo&libraries=places&callback=initAutocomplete"
                 async defer></script>

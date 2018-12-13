@@ -4,11 +4,11 @@ const util = require('util');
 
 
 const pool = mysql.createPool({
-    host: "MSI",
-    user: "master",
-    password: "master",
-    database: "sys",
-    port: 3306,
+    host: "localhost",
+    user: "root",
+    password: "Coldplay1",
+    database: "oingo",
+    port: 8889,
 
 });
 

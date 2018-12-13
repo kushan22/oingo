@@ -205,14 +205,12 @@ module.exports = () => {
 
     router.get('/home/createPost', (req, res, next) => {
         console.log("Called Create Post");
-        sess = req.session;
-        var userid = sess.sessId;
+        // sess = req.session;
         return res.render('createPost');
     });
 
     router.get('/home/filter', (req, res, next) => {
-        sess = req.session;
-        var userid = sess.sessId;
+        // sess = req.session;
         return res.render('filter');
     });
 
@@ -225,7 +223,7 @@ module.exports = () => {
     router.get('/home', async (req, res, next) => {
         //req.connection.setTimeout(0);
         var num_of_posts = 1, num_of_friends = 1, num_of_filters = 1;
-        console.log("Called");
+        // console.log("Called");
 
         try {
             var sql = "SELECT Count(*) as postCount FROM posts where uid = '" + USER_ID + "'";
@@ -239,17 +237,32 @@ module.exports = () => {
             var sql2 = "SELECT Count(*) as filterCount FROM filter_save where uid = '" + USER_ID + "'";
             var resultFilter = await promiseDb.query(sql2);
             num_of_filters = resultFilter[0]['filterCount'];
-            console.log(USER_ID);
+            // console.log(USER_ID);
             var friendsql = "select uid,fullname from user where uid != '" + USER_ID + "' and uid  not in( select distinct u1id as friends from friends where u2id='" + USER_ID + "' and status in (1,2) union  select distinct u2id as friends from friends where u1id='" + USER_ID + "' and status in (1,2)) ";
             var friendsug = await promiseDb.query(friendsql);
             var countfriendsug = friendsug.length;
             var friendsug_res = [];
             var friendsug_resname = [];
-            console.log(countfriendsug);
+            // console.log(countfriendsug);
             for (var i = 0; i < countfriendsug; i++) {
                 friendsug_res[i] = friendsug[i]['uid'];
                 friendsug_resname[i] = friendsug[i]['fullname'];
             }
+
+            // Getting the posts
+            var postSql = "SELECT state,description from posts";
+            var postsResult = await promiseDb.query(postSql);
+
+            var allPosts = [];
+            for (var c = 0; c < postsResult.length; c++){
+                 allPosts.push({
+                     state: postsResult[c]['state'],
+                     description: postsResult[c]['description']
+                 });
+            }
+
+           // console.log(allPosts);
+
 
             return res.render('home', {
                 page: 'Home Page',
@@ -261,6 +274,7 @@ module.exports = () => {
                 filters: num_of_filters,
                 friendsuggestion: friendsug_res,
                 friendsuggestionname: friendsug_resname,
+                totalPosts: allPosts
             });
         } catch (err) {
             throw new Error(err);
@@ -915,17 +929,50 @@ module.exports = () => {
             }
         }
 
-        
+    
+});
 
-       
+router.post('/home/filter',(req,res,next) => {
+    var filterTag = req.body.filtertag;
+    var state = req.body.filterState;
+    var locationString = req.body.filterLocation;
+    var radius = req.body.filterRadius;
+    var filterDate = req.body.filterDate;
+    var filterFromTime = req.body.filterFromTime;
+    var filterToTime = req.body.filterToTime;
 
+    filterFromTime = filterFromTime.substring(0,filterFromTime.indexOf(" "));
+    fromdigit = filterFromTime.substring(0,filterFromTime.indexOf(":"));
+    if (fromdigit.length == 1){
+            filterFromTime = "0" + filterFromTime;
+    }
+    filterToTime = filterToTime.substring(0,filterToTime.indexOf(" "));
+    toDigit = filterToTime.substring(0,filterToTime.indexOf(":"));
+    if (fromdigit.length == 1){
+            filterToTime = "0" + filterToTime;
+     }
+    filterFromTime = filterFromTime + ":00";
+    filterToTime = filterToTime + ":00";
 
+    var resLatLong = locationString.split("_");
+    var latitude = (resLatLong[0] * (Math.PI / 180)).toFixed(8);
+    var longitude = (resLatLong[1] * (Math.PI / 180)).toFixed(8) ;
 
+    //console.log(filterTag);
+    const filterSql = "INSERT INTO filter_save (uid,filter_date,filter_from_time,filter_to_time,state,tag,flatitude,flongitude,filter_text,radius) VALUES('"+USER_ID+"','"+filterDate+"','"+filterFromTime+"','"+filterToTime+"','"+state+"','"+filterTag+"','"+latitude+"','"+longitude+"','','"+radius+"')";
+    db.query(filterSql,(err,result)=> {
+        if (err){
+            throw new Error(err);
+        }else{
+            console.log(result['insertId']);
+            return res.redirect('/home/filter');
+        }
 
+    });
+    //console.log("Tag: " + filterTag + " State " + state + " location " + locationString + " radius " + radius + " filterDate " + filterDate + " fromTime " + filterFromTime + " toTime " + filterToTime);
 
-
-   // return res.redirect('/home');
-     });
+    
+});
 
 
 

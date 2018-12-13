@@ -101,13 +101,14 @@
                 <div class="panel panel-info">
 
                     <div class="panel-body">
+                        <% for (var i = 0; i < totalPosts.length; i++){ %>
                         <div class="media">
                             <a class="media-left" href="#fake">
                                 <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
                             </a>
                             <div class="media-body">
-                                <h4 class="media-heading">NOTE 1</h4>
-                                <p>Food is great at this restaurant. Loved the Sushi.</p>
+                                <h4 class="media-heading"><%= totalPosts[i]['state'] %></h4>
+                                <p><%= totalPosts[i]['description'] %></p>
                                 <ul class="nav nav-pills nav-pills-custom">
                                     <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
                                     <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
@@ -117,71 +118,10 @@
                             </div>
                         </div>
 
-                        <div class="media">
-                            <a class="media-left" href="#fake">
-                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">NOTE 2</h4>
-                                <p>Gazing at the Chelsea Skyline </p>
-                                <ul class="nav nav-pills nav-pills-custom">
-                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                </ul>
-                            </div>
+                        <% } %>
 
-                        </div>
-                        <div class="media">
-                            <a class="media-left" href="#fake">
-                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Note 3</h4>
-                                <p>Not Feeling Great</p>
-                                <ul class="nav nav-pills nav-pills-custom">
-                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                </ul>
-                            </div>
 
-                        </div>
-                        <div class="media">
-                            <a class="media-left" href="#fake">
-                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Note 5</h4>
-                                <p>Chilling at the Football game.</p>
-                                <ul class="nav nav-pills nav-pills-custom">
-                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                    <li><a href="#">
-                                            <span class="glyphicon glyphicon-star"></span>
-                                        </a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                </ul>
-                            </div>
-
-                        </div>
-                        <div class="media">
-                            <a class="media-left" href="#fake">
-                                <img alt="" class="media-object img-rounded" src="http://placehold.it/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Note 6</h4>
-                                <p>Cycling at the Brooklyn Bridge</p>
-                                <ul class="nav nav-pills nav-pills-custom">
-                                    <li><a href="#"><span class="glyphicon glyphicon-share-alt"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-retweet"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-star"></span></a></li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a></li>
-                                </ul>
-                            </div>
-                        </div>
+                       
 
                     </div>
                 </div>
