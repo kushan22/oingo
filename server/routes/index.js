@@ -250,7 +250,11 @@ module.exports = () => {
             }
 
             // Getting the posts
-            var postSql = "SELECT state,description from posts";
+                    
+
+
+
+            var postSql = "SELECT pid,state,description from posts where uid = '"+USER_ID+"'";
             var postsResult = await promiseDb.query(postSql);
 
             var allPosts = [];
