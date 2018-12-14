@@ -2,9 +2,11 @@
     padding: 5em inherit;
     min-height: 300px;
 }
-#autocomplete {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 99%;
+
+  .button {
+	background-color:blueviolet;  
+	border-radius: 5px;
+	color: white;
+	padding: .5em;
+	text-decoration: none;
   }

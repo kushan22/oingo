@@ -1,7 +1,8 @@
 <html>
 <head>
         <link type="text/css" rel="stylesheet" href="/css/styleprofile.css">
-    
+       
+        <a href="/home" class="button js-button">  <span class="entypo-left"></span>  Go Back</a>
 </head>
 <body>
         <h1 class="title-pen"> OINGO User Profile </h1>
@@ -17,13 +18,13 @@
 
           <ul class="data">
             <li>
-              <span class="entypo-hourglass"> Filters : 8 </span>
+              <span class="entypo-hourglass"> Filters : <%=filterCount %> </span>
             </li>
             <li>
-              <span class="entypo-pencil"> Posts : 9</span>
+              <span class="entypo-pencil"> Posts :  <%=postCount %></span>
             </li>
             <li>
-              <span class="entypo-user"> Friends : 10</span>
+              <span class="entypo-user"> Friends : <%=friendCount %></span>
             </li>
          </ul>
 
@@ -36,6 +37,7 @@
                 <input type= "submit" value="Submit"></input>
                 </form>
             </footer>
+            
         </div>
           
 </body>
