@@ -50,3 +50,11 @@ div.panel-heading{
 .container{
 	height: 100%;
 }
+
+.button {
+	background-color:blueviolet;  
+	border-radius: 5px;
+	color: white;
+	padding: .5em;
+	text-decoration: none;
+  }

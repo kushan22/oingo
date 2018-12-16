@@ -100,3 +100,10 @@ footer > h1 a {
   text-decoration: none;
   color: #ea4c89;
 }
+.button {
+  background-color:blueviolet;  
+  border-radius: 5px;
+  color: white;
+  padding: .5em;
+  text-decoration: none;
+}

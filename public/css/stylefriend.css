@@ -1,0 +1,30 @@
+
+.container{
+	height: 90%;
+}
+
+.button {
+	background-color:blueviolet;  
+	border-radius: 5px;
+	color: white;
+    padding: .75em;
+    
+	text-decoration: none;
+  }
+
+
+div.panel-heading{
+	padding-top:15px;
+    padding-bottom: 0px;
+    background-color: cyan;
+}
+
+  .panel-info{
+	border:1px lightgrey solid;
+}
+
+
+.panel-body{
+    height: 500px;
+    background-color: lightcyan;
+}
